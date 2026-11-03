@@ -33,20 +33,22 @@ export function stop(): void {
   part = undefined;
 }
 
+/** Playback tempo in quarter notes per minute. */
+const TEMPO = 100;
+
 /**
  * Plays one 16th-note slot per entry; null entries are rests.
  * Calls onSlot with each slot's index as it sounds, in sync with the audio.
  */
 export async function play(
   midis: (number | null)[],
-  tempo: number,
   onSlot: (index: number) => void,
   onEnd: () => void,
 ): Promise<void> {
   await Tone.start();
   stop();
   const transport = Tone.getTransport();
-  transport.bpm.value = tempo;
+  transport.bpm.value = TEMPO;
   const step = Tone.Time("16n").toSeconds();
   const events = midis.map((midi, index) => ({ time: index * step, midi, index }));
   part = new Tone.Part<SlotEvent>((time, event) => {

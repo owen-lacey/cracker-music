@@ -1,7 +1,6 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { type Carol, carols, type Sheet } from "./carols";
 import { CarolList } from "./components/CarolList";
-import { type Key, KeyFields } from "./components/KeyFields";
 import { MelodyView } from "./components/MelodyView";
 import { Pad } from "./components/Pad";
 import { applyEdit, type EditorAction, type EditorState, emptyEditor, selectionRange } from "./editor";
@@ -10,11 +9,10 @@ import { midiFor } from "./pitch";
 import { play, preview, stop } from "./player";
 import { isFormField, shortcutFor } from "./shortcuts";
 
-const DEFAULT_KEY: Key = { tonic: "C", mode: "major", tempo: 100 };
 const PREVIEWED_ACTIONS = new Set<EditorAction["type"]>(["insert", "octave"]);
 
-function toSheet(carol: Carol, key: Key, editor: EditorState): Sheet {
-  return { title: carol.title, tune: carol.tune, ...key, melody: formatMelody(editor.slots) };
+function toSheet(carol: Carol, editor: EditorState): Sheet {
+  return { title: carol.title, tune: carol.tune, melody: formatMelody(editor.slots) };
 }
 
 function isDirty(current: Sheet, saved: Sheet | undefined): boolean {
@@ -24,13 +22,12 @@ function isDirty(current: Sheet, saved: Sheet | undefined): boolean {
 export function App() {
   const [saved, setSaved] = useState<Record<string, Sheet>>({});
   const [carol, setCarol] = useState<Carol>(carols[0]);
-  const [key, setKey] = useState<Key>(DEFAULT_KEY);
   const [editor, setEditor] = useState<EditorState>(emptyEditor);
   const [playing, setPlaying] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [status, setStatus] = useState("");
 
-  const sheet = toSheet(carol, key, editor);
+  const sheet = toSheet(carol, editor);
   const dirty = isDirty(sheet, saved[carol.slug]);
 
   useEffect(() => {
@@ -44,7 +41,7 @@ export function App() {
     const next = applyEdit(editor, action);
     setEditor(next);
     const slot = next.slots[next.cursor - 1];
-    if (PREVIEWED_ACTIONS.has(action.type) && slot) void preview(midiFor(slot, key.tonic, key.mode));
+    if (PREVIEWED_ACTIONS.has(action.type) && slot) void preview(midiFor(slot));
   }
 
   const onKeyDown = useEffectEvent((event: KeyboardEvent) => {
@@ -89,7 +86,6 @@ export function App() {
     const existing = saved[next.slug];
     stopPlayback();
     setCarol(next);
-    setKey(existing ? { tonic: existing.tonic, mode: existing.mode, tempo: existing.tempo } : DEFAULT_KEY);
     setEditor(applyEdit(emptyEditor, { type: "load", slots: existing ? parseMelody(existing.melody) : [] }));
     setStatus("");
   }
@@ -116,9 +112,9 @@ export function App() {
       return;
     }
     const start = editor.selection ? selectionRange(editor.selection).start : 0;
-    const midis = editor.slots.slice(start).map((slot) => (slot ? midiFor(slot, key.tonic, key.mode) : null));
+    const midis = editor.slots.slice(start).map((slot) => (slot ? midiFor(slot) : null));
     setPlaying(true);
-    void play(midis, key.tempo, (index) => setActiveSlot(start + index), () => {
+    void play(midis, (index) => setActiveSlot(start + index), () => {
       setPlaying(false);
       setActiveSlot(null);
     });
@@ -133,7 +129,6 @@ export function App() {
           {carol.tune && <span className="font-normal text-gray-500"> ({carol.tune})</span>}
           {dirty && <span className="ml-2 text-sm font-normal text-amber-600">unsaved</span>}
         </h1>
-        <KeyFields value={key} onChange={setKey} />
         <MelodyView
           slots={editor.slots}
           cursor={editor.cursor}

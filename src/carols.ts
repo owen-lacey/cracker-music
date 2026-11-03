@@ -10,9 +10,6 @@ export interface Carol {
 export interface Sheet {
   title: string;
   tune?: string;
-  tonic: string;
-  mode: string;
-  tempo: number;
   melody: string;
 }
 
