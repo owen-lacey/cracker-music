@@ -3,10 +3,11 @@ import { type Carol, carols, type Sheet } from "./carols";
 import { CarolList } from "./components/CarolList";
 import { MelodyView } from "./components/MelodyView";
 import { Pad } from "./components/Pad";
+import { PlaybackSliders } from "./components/PlaybackSliders";
 import { applyEdit, type EditorAction, type EditorState, emptyEditor, selectionRange } from "./editor";
 import { formatMelody, parseMelody } from "./melody";
-import { midiFor } from "./pitch";
-import { play, preview, stop } from "./player";
+import { keyName, midiFor } from "./pitch";
+import { DEFAULT_TEMPO, play, preview, setTempo, setTranspose, stop } from "./player";
 import { isFormField, shortcutFor } from "./shortcuts";
 
 const PREVIEWED_ACTIONS = new Set<EditorAction["type"]>(["insert", "octave"]);
@@ -26,6 +27,8 @@ export function App() {
   const [playing, setPlaying] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [status, setStatus] = useState("");
+  const [tempo, setTempoState] = useState(DEFAULT_TEMPO);
+  const [transpose, setTransposeState] = useState(0);
 
   const sheet = toSheet(carol, editor);
   const dirty = isDirty(sheet, saved[carol.slug]);
@@ -100,6 +103,16 @@ export function App() {
     setStatus(`Saved data/carols/${carol.slug}.json`);
   }
 
+  function changeTempo(bpm: number) {
+    setTempo(bpm);
+    setTempoState(bpm);
+  }
+
+  function changeTranspose(semitones: number) {
+    setTranspose(semitones);
+    setTransposeState(semitones);
+  }
+
   function stopPlayback() {
     stop();
     setPlaying(false);
@@ -142,6 +155,13 @@ export function App() {
           and paste.
         </p>
         <Pad accidental={editor.accidental} onAction={edit} />
+        <PlaybackSliders
+          tempo={tempo}
+          transpose={transpose}
+          keyName={keyName(transpose)}
+          onTempoChange={changeTempo}
+          onTransposeChange={changeTranspose}
+        />
         <div className="flex items-center gap-2">
           <button
             type="button"

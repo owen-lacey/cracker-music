@@ -25,5 +25,5 @@ pnpm, Vite, React, TypeScript, Tailwind, `tonal` (degree → pitch), `tone` (pla
 - Carols to transcribe are the `- [x]` lines of `carol-list.md`, parsed by `src/carols.ts`.
 - One file per carol: `data/carols/<slug>.json` with `title`, `tune?`, `melody`.
 - `melody` is one token per 16th-note slot: `1`–`7` scale degree, `'`/`,` suffix for octave above/below, `#`/`b` prefix for sharp/flat, space for rest. No holds or bar lines.
-- No key is stored: degrees are read against the major scale (a minor third is `b3`). Playback is C major (middle-octave 1 = C4) at a fixed tempo.
+- No key is stored: degrees are read against the major scale (a minor third is `b3`). Playback defaults to C major (middle-octave 1 = C4) at ♩ = 100. The key and tempo sliders change playback only and are never saved.
 - Parse with `parseMelody` (`src/melody.ts`); convert to MIDI with `midiFor` (`src/pitch.ts`).

@@ -3,12 +3,18 @@ import * as Tone from "tone";
 let synth: Tone.PolySynth | undefined;
 
 interface SlotEvent {
-  time: number;
+  time: string;
   midi: number | null;
   index: number;
 }
 
 let part: Tone.Part<SlotEvent> | undefined;
+
+/** Playback tempo in quarter notes per minute. */
+export const DEFAULT_TEMPO = 100;
+
+let tempo = DEFAULT_TEMPO;
+let transpose = 0;
 
 function getSynth(): Tone.PolySynth {
   synth ??= new Tone.PolySynth(Tone.Synth).toDestination();
@@ -16,7 +22,18 @@ function getSynth(): Tone.PolySynth {
 }
 
 function frequency(midi: number): number {
-  return Tone.Frequency(midi, "midi").toFrequency();
+  return Tone.Frequency(midi + transpose, "midi").toFrequency();
+}
+
+/** Sets the tempo, taking effect immediately if a melody is playing. */
+export function setTempo(bpm: number): void {
+  tempo = bpm;
+  Tone.getTransport().bpm.value = bpm;
+}
+
+/** Shifts all playback by this many semitones, from the next note sounded. */
+export function setTranspose(semitones: number): void {
+  transpose = semitones;
 }
 
 export async function preview(midi: number): Promise<void> {
@@ -33,8 +50,10 @@ export function stop(): void {
   part = undefined;
 }
 
-/** Playback tempo in quarter notes per minute. */
-const TEMPO = 100;
+/** Position of a 16th-note slot, in bars:beats:sixteenths, so it follows tempo changes. */
+function slotTime(index: number): string {
+  return `0:0:${index}`;
+}
 
 /**
  * Plays one 16th-note slot per entry; null entries are rests.
@@ -48,9 +67,8 @@ export async function play(
   await Tone.start();
   stop();
   const transport = Tone.getTransport();
-  transport.bpm.value = TEMPO;
-  const step = Tone.Time("16n").toSeconds();
-  const events = midis.map((midi, index) => ({ time: index * step, midi, index }));
+  transport.bpm.value = tempo;
+  const events = midis.map((midi, index) => ({ time: slotTime(index), midi, index }));
   part = new Tone.Part<SlotEvent>((time, event) => {
     if (event.midi !== null) getSynth().triggerAttackRelease(frequency(event.midi), "16n", time);
     Tone.getDraw().schedule(() => onSlot(event.index), time);
@@ -58,6 +76,6 @@ export async function play(
   transport.scheduleOnce(() => {
     stop();
     onEnd();
-  }, midis.length * step);
+  }, slotTime(midis.length));
   transport.start();
 }

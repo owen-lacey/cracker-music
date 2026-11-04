@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseMelody, type ScaleNote } from "./melody";
-import { midiFor } from "./pitch";
+import { keyName, midiFor } from "./pitch";
 
 function midis(melody: string): number[] {
   return parseMelody(melody).map((slot) => midiFor(slot as ScaleNote));
@@ -13,5 +13,11 @@ describe("midiFor", () => {
 
   it("maps octaves and accidentals", () => {
     expect(midis("1'b7,#4")).toEqual([72, 58, 66]);
+  });
+});
+
+describe("keyName", () => {
+  it("names the key a transposition from C lands in", () => {
+    expect([-6, -1, 0, 2, 5].map(keyName)).toEqual(["Gb", "B", "C", "D", "F"]);
   });
 });
