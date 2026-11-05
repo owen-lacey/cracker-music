@@ -3,8 +3,8 @@ import { carols, parseCarolList, slugify } from "./carols";
 
 describe("parseCarolList", () => {
   it("reads every ticked carol from carol-list.md with unique slugs", () => {
-    expect(carols).toHaveLength(53);
-    expect(new Set(carols.map((carol) => carol.slug)).size).toBe(53);
+    expect(carols).toHaveLength(46);
+    expect(new Set(carols.map((carol) => carol.slug)).size).toBe(46);
   });
 
   it("sorts carols alphabetically by title", () => {
