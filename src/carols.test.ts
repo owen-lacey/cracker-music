@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { carols, parseCarolList, slugify } from "./carols";
+import { carols, includedCarols, slugify } from "./carols";
 
-describe("parseCarolList", () => {
-  it("reads every ticked carol from carol-list.md with unique slugs", () => {
+describe("includedCarols", () => {
+  it("reads every carol from data/carols.json with unique slugs", () => {
     expect(carols).toHaveLength(46);
     expect(new Set(carols.map((carol) => carol.slug)).size).toBe(46);
   });
@@ -13,15 +13,16 @@ describe("parseCarolList", () => {
     expect(titles[0]).toBe("Angels we have heard on high");
   });
 
-  it("splits title and tune, keeping parentheses in titles", () => {
-    const markdown = [
-      "- [x] It came upon the midnight clear: tune *Traditional* (Noel) (CC, NCP, SoC)",
-      "- [x] Christ is born (Il est né) (CC, NCP)",
-      "- [ ] Not chosen (CC)",
-    ].join("\n");
-    expect(parseCarolList(markdown)).toEqual([
+  it("leaves out soft-deleted carols and keeps tunes", () => {
+    expect(
+      includedCarols([
+        { title: "It came upon the midnight clear", tune: "Noel", deleted: false },
+        { title: "Christ is born (Il est né)", deleted: false },
+        { title: "Not chosen", deleted: true },
+      ]),
+    ).toEqual([
       { title: "Christ is born (Il est né)", tune: undefined, slug: "christ-is-born-il-est-ne" },
-      { title: "It came upon the midnight clear", tune: "Traditional", slug: "it-came-upon-the-midnight-clear" },
+      { title: "It came upon the midnight clear", tune: "Noel", slug: "it-came-upon-the-midnight-clear" },
     ]);
   });
 });

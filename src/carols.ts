@@ -1,4 +1,12 @@
-import carolList from "../carol-list.md?raw";
+import carolList from "../data/carols.json";
+
+/** One row of data/carols.json, the single list of carols in the post. */
+export interface CarolEntry {
+  title: string;
+  tune?: string;
+  /** Soft deletion: the row stays in the file but the carol is left out of the post. */
+  deleted: boolean;
+}
 
 export interface Carol {
   title: string;
@@ -13,8 +21,6 @@ export interface Sheet {
   melody: string;
 }
 
-const TICKED_LINE = /^- \[x\] (.+?)(?:: tune \*([^*]+)\*.*)? \([^()]*\)$/;
-
 export function slugify(title: string): string {
   return title
     .normalize("NFD")
@@ -24,14 +30,12 @@ export function slugify(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function parseCarolList(markdown: string): Carol[] {
-  return markdown
-    .split("\n")
-    .flatMap((line) => {
-      const match = TICKED_LINE.exec(line.trim());
-      return match ? [{ title: match[1], tune: match[2], slug: slugify(match[1]) }] : [];
-    })
+/** The carols that are not soft-deleted, sorted by title. */
+export function includedCarols(entries: CarolEntry[]): Carol[] {
+  return entries
+    .filter((entry) => !entry.deleted)
+    .map((entry) => ({ title: entry.title, tune: entry.tune, slug: slugify(entry.title) }))
     .sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
 }
 
-export const carols = parseCarolList(carolList);
+export const carols = includedCarols(carolList);

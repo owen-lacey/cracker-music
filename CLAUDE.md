@@ -22,7 +22,7 @@ pnpm, Vite, React, TypeScript, Tailwind, `tonal` (degree → pitch), `tone` (pla
 
 ## Transcription data
 
-- Carols to transcribe are the `- [x]` lines of `carol-list.md`, parsed by `src/carols.ts`.
+- `data/carols.json` is the single list of carols in the post: `title`, `tune?`, `deleted` (soft deletion). Code reads it through `carols` in `src/carols.ts`, which leaves out deleted rows; the post-lab cell `c4r01s7a` shows it as a table.
 - One file per carol: `data/carols/<slug>.json` with `title`, `tune?`, `melody`.
 - `melody` is one token per 16th-note slot: `1`–`7` scale degree, `'`/`,` suffix for octave above/below, `#`/`b` prefix for sharp/flat, space for rest. No holds or bar lines.
 - No key is stored: degrees are read against the major scale (a minor third is `b3`). Playback defaults to C major (middle-octave 1 = C4) at ♩ = 100. The key and tempo sliders change playback only and are never saved.
