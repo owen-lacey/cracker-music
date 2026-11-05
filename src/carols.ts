@@ -4,8 +4,8 @@ import carolList from "../data/carols.json";
 export interface CarolEntry {
   title: string;
   tune?: string;
-  /** Soft deletion: the row stays in the file but the carol is left out of the post. */
-  deleted: boolean;
+  /** Whether the carol is in the post; excluded rows stay in the file. */
+  included: boolean;
 }
 
 export interface Carol {
@@ -30,10 +30,10 @@ export function slugify(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-/** The carols that are not soft-deleted, sorted by title. */
+/** The included carols, sorted by title. */
 export function includedCarols(entries: CarolEntry[]): Carol[] {
   return entries
-    .filter((entry) => !entry.deleted)
+    .filter((entry) => entry.included)
     .map((entry) => ({ title: entry.title, tune: entry.tune, slug: slugify(entry.title) }))
     .sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
 }

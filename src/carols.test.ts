@@ -13,12 +13,12 @@ describe("includedCarols", () => {
     expect(titles[0]).toBe("Angels we have heard on high");
   });
 
-  it("leaves out soft-deleted carols and keeps tunes", () => {
+  it("leaves out excluded carols and keeps tunes", () => {
     expect(
       includedCarols([
-        { title: "It came upon the midnight clear", tune: "Noel", deleted: false },
-        { title: "Christ is born (Il est né)", deleted: false },
-        { title: "Not chosen", deleted: true },
+        { title: "It came upon the midnight clear", tune: "Noel", included: true },
+        { title: "Christ is born (Il est né)", included: true },
+        { title: "Not chosen", included: false },
       ]),
     ).toEqual([
       { title: "Christ is born (Il est né)", tune: undefined, slug: "christ-is-born-il-est-ne" },
