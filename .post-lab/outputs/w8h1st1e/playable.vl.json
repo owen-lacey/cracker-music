@@ -1,0 +1,232 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Notes playable on the 8 whistles",
+    "subtitle": "4 of 22 included carols fully playable on 1–7 and 1'"
+  },
+  "width": "container",
+  "height": 360,
+  "data": {
+    "values": [
+      {
+        "title": "Ding dong! merrily on high",
+        "mode": "major",
+        "playable": 66.6,
+        "bin": "60–69%"
+      },
+      {
+        "title": "God rest you merry, gentlemen",
+        "mode": "minor",
+        "playable": 67.1,
+        "bin": "60–69%"
+      },
+      {
+        "title": "We wish you a merry Christmas",
+        "mode": "major",
+        "playable": 68.5,
+        "bin": "60–69%"
+      },
+      {
+        "title": "We three kings of Orient are",
+        "mode": "minor",
+        "playable": 72.5,
+        "bin": "70–79%"
+      },
+      {
+        "title": "Good King Wenceslas",
+        "mode": "major",
+        "playable": 73.5,
+        "bin": "70–79%"
+      },
+      {
+        "title": "O come, all ye faithful",
+        "mode": "major",
+        "playable": 75.8,
+        "bin": "70–79%"
+      },
+      {
+        "title": "Once in royal David's city",
+        "mode": "major",
+        "playable": 83.3,
+        "bin": "80–89%"
+      },
+      {
+        "title": "Silent night!",
+        "mode": "major",
+        "playable": 84.7,
+        "bin": "80–89%"
+      },
+      {
+        "title": "The twelve days of Christmas",
+        "mode": "major",
+        "playable": 88.1,
+        "bin": "80–89%"
+      },
+      {
+        "title": "Away in a manger",
+        "mode": "major",
+        "playable": 88.4,
+        "bin": "80–89%"
+      },
+      {
+        "title": "While shepherds watched",
+        "mode": "major",
+        "playable": 89.2,
+        "bin": "80–89%"
+      },
+      {
+        "title": "O Christmas tree",
+        "mode": "major",
+        "playable": 90.1,
+        "bin": "90–99%"
+      },
+      {
+        "title": "Hark! the herald angels sing",
+        "mode": "major",
+        "playable": 90.7,
+        "bin": "90–99%"
+      },
+      {
+        "title": "O little town of Bethlehem",
+        "mode": "major",
+        "playable": 92.8,
+        "bin": "90–99%"
+      },
+      {
+        "title": "Frosty the snowman",
+        "mode": "major",
+        "playable": 93.1,
+        "bin": "90–99%"
+      },
+      {
+        "title": "In the bleak midwinter",
+        "mode": "major",
+        "playable": 95.5,
+        "bin": "90–99%"
+      },
+      {
+        "title": "Deck the hall",
+        "mode": "major",
+        "playable": 97,
+        "bin": "90–99%"
+      },
+      {
+        "title": "Rudolph, the red-nosed reindeer",
+        "mode": "major",
+        "playable": 98.2,
+        "bin": "90–99%"
+      },
+      {
+        "title": "Jingle Bells",
+        "mode": "major",
+        "playable": 100,
+        "bin": "100%"
+      },
+      {
+        "title": "Joy to the world!",
+        "mode": "major",
+        "playable": 100,
+        "bin": "100%"
+      },
+      {
+        "title": "Little Donkey",
+        "mode": "major",
+        "playable": 100,
+        "bin": "100%"
+      },
+      {
+        "title": "The first Nowell",
+        "mode": "major",
+        "playable": 100,
+        "bin": "100%"
+      }
+    ]
+  },
+  "mark": {
+    "type": "bar",
+    "width": {
+      "band": 0.8
+    },
+    "stroke": "#333333",
+    "strokeWidth": 2
+  },
+  "encoding": {
+    "x": {
+      "field": "bin",
+      "type": "ordinal",
+      "scale": {
+        "domain": [
+          "0–9%",
+          "10–19%",
+          "20–29%",
+          "30–39%",
+          "40–49%",
+          "50–59%",
+          "60–69%",
+          "70–79%",
+          "80–89%",
+          "90–99%",
+          "100%"
+        ]
+      },
+      "title": "Share of the carol's notes on the whistles",
+      "axis": {
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "aggregate": "count",
+      "type": "quantitative",
+      "stack": "zero",
+      "title": "Carols",
+      "axis": {
+        "gridOpacity": 0.3,
+        "tickMinStep": 1
+      }
+    },
+    "color": {
+      "field": "mode",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "major",
+          "minor"
+        ],
+        "range": [
+          "#c98500",
+          "#9085e9"
+        ]
+      },
+      "title": "Key"
+    },
+    "detail": {
+      "field": "title"
+    },
+    "order": {
+      "field": "mode"
+    },
+    "tooltip": [
+      {
+        "field": "title",
+        "title": "Carol"
+      },
+      {
+        "field": "mode",
+        "title": "Key"
+      },
+      {
+        "field": "playable",
+        "title": "Playable %"
+      }
+    ]
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false
+    }
+  }
+}
