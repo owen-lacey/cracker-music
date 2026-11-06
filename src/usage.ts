@@ -1,3 +1,4 @@
+import { MODES, type Mode } from "./carols";
 import { formatSlot, parseMelody, type ScaleNote } from "./melody";
 import { midiFor } from "./pitch";
 
@@ -55,4 +56,38 @@ export function noteUsage(melodies: string[], folding: Folding): UsageSegment[] 
       };
     })
     .sort((a, b) => a.barPitch - b.barPitch || a.pitch - b.pitch);
+}
+
+/** One stacked segment: how many notes in a bar come from carols in one mode. */
+export interface ModeSegment {
+  bar: string;
+  barPitch: number;
+  mode: Mode;
+  count: number;
+}
+
+/** A carol's melody tagged with the mode it is in. */
+export interface ModedMelody {
+  mode: Mode;
+  melody: string;
+}
+
+function barsFor(mode: Mode, melodies: string[], folding: Folding): ModeSegment[] {
+  const bars = new Map<string, ModeSegment>();
+  for (const { bar, barPitch, count } of noteUsage(melodies, folding)) {
+    const total = bars.get(bar)?.count ?? 0;
+    bars.set(bar, { bar, barPitch, mode, count: total + count });
+  }
+  return [...bars.values()];
+}
+
+/** Note usage per bar, split by the mode of the carol each note comes from; ordered by bar pitch then mode. */
+export function modeUsage(melodies: ModedMelody[], folding: Folding): ModeSegment[] {
+  return MODES.flatMap((mode) =>
+    barsFor(
+      mode,
+      melodies.filter((carol) => carol.mode === mode).map((carol) => carol.melody),
+      folding,
+    ),
+  ).sort((a, b) => a.barPitch - b.barPitch || MODES.indexOf(a.mode) - MODES.indexOf(b.mode));
 }

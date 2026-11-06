@@ -1,191 +1,237 @@
 [
   {
     "title": "Angels we have heard on high",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Angels, from the realms of Glory",
     "tune": "Iris",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "As with gladness men of old",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Auld lang syne",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Away in a manger",
     "tune": "Traditional",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Calypso Carol",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Carol of the drum",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Christ was born on Christmas Day",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Coventry Carol",
-    "included": true
+    "included": false,
+    "mode": "minor"
   },
   {
     "title": "Deck the hall",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Ding dong! merrily on high",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Do you hear what I hear?",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Frosty the snowman",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Gaudete",
-    "included": true
+    "included": false,
+    "mode": "minor"
   },
   {
     "title": "Go, tell it on the mountain!",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "God rest you merry, gentlemen",
-    "included": true
+    "included": true,
+    "mode": "minor"
   },
   {
     "title": "Good Christian men, rejoice",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Good King Wenceslas",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Hark! the herald angels sing",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Have yourself a merry little Christmas",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "I saw three ships come sailing in",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "In the bleak midwinter",
     "tune": "Cranham",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Jingle Bells",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Joy to the world!",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Little Donkey",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Mary's boy child",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "O Christmas tree",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "O come, all ye faithful",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "O come, Immanuel",
-    "included": true
+    "included": false,
+    "mode": "minor"
   },
   {
     "title": "O holy night!",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "O little town of Bethlehem",
     "tune": "Forest Green",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Once in royal David's city",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Rudolph, the red-nosed reindeer",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "See, amid the winter's snow",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Silent night!",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Sussex Carol",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "Sweet chiming Christmas bells",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "The first Nowell",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "The holly and the ivy",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "The twelve days of Christmas",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "We three kings of Orient are",
-    "included": true
+    "included": true,
+    "mode": "minor"
   },
   {
     "title": "We wish you a merry Christmas",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "What child is this?",
-    "included": true
+    "included": false,
+    "mode": "minor"
   },
   {
     "title": "When a child is born",
-    "included": true
+    "included": false,
+    "mode": "major"
   },
   {
     "title": "While shepherds watched",
     "tune": "Winchester Old",
-    "included": true
+    "included": true,
+    "mode": "major"
   },
   {
     "title": "Who is he?",
-    "included": true
+    "included": false,
+    "mode": "major"
   }
 ]

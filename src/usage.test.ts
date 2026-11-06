@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fold, noteUsage } from "./usage";
+import { fold, modeUsage, noteUsage } from "./usage";
 
 const note = (degree: number, accidental: -1 | 0 | 1, octave: -1 | 0 | 1) => ({ degree, accidental, octave });
 
@@ -51,5 +51,24 @@ describe("noteUsage", () => {
 
   it("ignores rests", () => {
     expect(noteUsage(["    "], { octaves: true, accidentals: true })).toEqual([]);
+  });
+});
+
+describe("modeUsage", () => {
+  const melodies = [
+    { mode: "major" as const, melody: "1 3 5 1" },
+    { mode: "minor" as const, melody: "6, 1 3 b3" },
+  ];
+
+  it("sums each bar's notes per mode, major below minor", () => {
+    expect(
+      modeUsage(melodies, { octaves: true, accidentals: true }).map(({ bar, mode, count }) => `${bar}:${mode}=${count}`),
+    ).toEqual(["1:major=2", "1:minor=1", "3:major=1", "3:minor=2", "5:major=1", "6:minor=1"]);
+  });
+
+  it("keeps split notes in their own bars", () => {
+    expect(
+      modeUsage(melodies, { octaves: false, accidentals: false }).map(({ bar, mode, count }) => `${bar}:${mode}=${count}`),
+    ).toEqual(["6,:minor=1", "1:major=2", "1:minor=1", "b3:minor=1", "3:major=1", "3:minor=1", "5:major=1"]);
   });
 });
