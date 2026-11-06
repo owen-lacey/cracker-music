@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseMelody, type ScaleNote } from "./melody";
-import { onWhistle, playableShare } from "./whistles";
+import { onWhistle, playableShare, splitWhistles, WHISTLES, type Whistle, whistleLoads } from "./whistles";
 
 const note = (token: string) => parseMelody(token)[0] as ScaleNote;
 
@@ -21,5 +21,45 @@ describe("playableShare", () => {
 
   it("throws on a melody with no notes", () => {
     expect(() => playableShare("   ")).toThrow("Melody has no notes");
+  });
+});
+
+describe("whistleLoads", () => {
+  it("merges octaves into the whistles, keeps 1' apart and leaves out accidentals and rests", () => {
+    expect(whistleLoads(["1 5, 1' b3", "#4 2' 1,"])).toEqual({
+      "1": 2,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "1'": 1,
+    });
+  });
+});
+
+describe("splitWhistles", () => {
+  const even = Object.fromEntries(WHISTLES.map((whistle) => [whistle, 1])) as Record<Whistle, number>;
+
+  it("gives one person every whistle", () => {
+    expect(splitWhistles(even, 1)).toEqual([[...WHISTLES]]);
+  });
+
+  it("gives eight people one whistle each", () => {
+    expect(splitWhistles(even, 8)).toEqual(WHISTLES.map((whistle) => [whistle]));
+  });
+
+  it("balances the busiest person's notes", () => {
+    const loads = { ...even, "1": 10, "5": 6, "3": 4 };
+    const split = splitWhistles(loads, 2);
+    const totals = split.map((group) => group.reduce((sum, whistle) => sum + loads[whistle], 0));
+    expect(totals.sort()).toEqual([12, 13]);
+    expect(split.flat().sort()).toEqual([...WHISTLES].sort());
+  });
+
+  it("rejects fewer than one or more than eight people", () => {
+    expect(() => splitWhistles(even, 0)).toThrow("People must be a whole number from 1 to 8, got 0");
+    expect(() => splitWhistles(even, 9)).toThrow("People must be a whole number from 1 to 8, got 9");
   });
 });
