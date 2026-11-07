@@ -1,5 +1,6 @@
 :root {
 	--focus-color: #f0223e;
+	--instrument-gap: 1.5rem;
 	--instrument-duration: 600ms;
 	--bell-swing: 8deg;
 	--bell-duration: 400ms;
