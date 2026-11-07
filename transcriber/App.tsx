@@ -193,6 +193,7 @@ export function App() {
 		setPlaying(true);
 		void play(
 			midis,
+			"bell",
 			(index) => setActiveSlot(start + index),
 			() => {
 				setPlaying(false);

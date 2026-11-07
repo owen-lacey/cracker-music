@@ -27,6 +27,11 @@ export function whistleFor(number: InstrumentNumber): Whistle {
 	return WHISTLES[number - 1];
 }
 
+/** The instrument number that plays a whistle's note; the inverse of `whistleFor`. */
+export function numberFor(whistle: Whistle): InstrumentNumber {
+	return (WHISTLES.indexOf(whistle) + 1) as InstrumentNumber;
+}
+
 /**
  * Which children of each artwork's <svg> to measure: sound waves sit either side of `span`,
  * level with the middle of `level`; bells swing from the middle of `pivot`, their handle.

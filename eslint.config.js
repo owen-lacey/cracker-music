@@ -14,7 +14,7 @@ export default defineConfig(
 	svelte.configs.recommended,
 	storybook.configs["flat/recommended"],
 	{
-		files: ["**/*.svelte"],
+		files: ["**/*.svelte", "**/*.svelte.ts"],
 		languageOptions: { parserOptions: { parser: tseslint.parser } },
 		// Not in svelte.configs.recommended: reports Svelte compiler errors and warnings.
 		rules: { "svelte/valid-compile": "error" }

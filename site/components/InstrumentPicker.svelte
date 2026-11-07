@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { INSTRUMENT_KINDS, type InstrumentKind } from "../../src/player";
+	import { selection } from "../selection.svelte";
 	import Instruments from "./Instruments.svelte";
 
 	const LABELS: Record<InstrumentKind, string> = {
@@ -7,8 +8,6 @@
 		whistle: "Whistles",
 		xylophone: "Xylophones"
 	};
-
-	let kind = $state<InstrumentKind>("bell");
 </script>
 
 <div class="picker">
@@ -16,12 +15,17 @@
 		<legend>Instrument</legend>
 		{#each INSTRUMENT_KINDS as option (option)}
 			<label>
-				<input type="radio" name="kind" value={option} bind:group={kind} />
+				<input
+					type="radio"
+					name="kind"
+					value={option}
+					bind:group={selection.kind}
+				/>
 				<span>{LABELS[option]}</span>
 			</label>
 		{/each}
 	</fieldset>
-	<Instruments {kind} />
+	<Instruments kind={selection.kind} />
 </div>
 
 <style>

@@ -21,10 +21,15 @@
 	let played = $state<typeof Artwork>();
 	const playing = $derived(played === Artwork);
 
-	function play() {
-		void preview(whistleMidi(whistleFor(number)), kind);
+	/** Animates the instrument as if played; the caller sounds the note. */
+	export function ring() {
 		played = Artwork;
 		plays += 1;
+	}
+
+	function play() {
+		void preview(whistleMidi(whistleFor(number)), kind);
+		ring();
 	}
 </script>
 

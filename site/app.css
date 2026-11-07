@@ -11,6 +11,18 @@
 	--toggle-margin: 2rem;
 	--toggle-underline: 2px;
 	--toggle-underline-gap: 0.25rem;
+	--track-slot: 1.25rem;
+	--track-playhead: 25%;
+	--track-height: 3rem;
+	--track-margin: 1.5rem;
+	--track-fade: 2rem;
+	--track-font-size: 1.25rem;
+	--track-line: 2px;
+	--track-line-color: #e4e8ec;
+	--track-past-opacity: 0.35;
+	--control-size: 1.5rem;
+	/* Heavier than Lucide's 2 so the outline replay arrow weighs the same as the solid icons. */
+	--control-stroke: 2.5;
 	/* Timed to the samples: struck notes fall 20 dB by 0.2–0.3 s and fade out by about 0.8 s;
 	   a whistle note swells for its 8th note (0.3 s at ♩ = 100) then releases. */
 	--ring-duration: 800ms;
@@ -31,6 +43,13 @@
 
 /* Registered as a length so `fit` (site/instruments.ts) reads it resolved to px. */
 @property --instrument-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+
+/* Registered as a length so a drag on the Jingle Bells track reads it resolved to px. */
+@property --track-slot {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 0px;

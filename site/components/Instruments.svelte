@@ -10,6 +10,13 @@
 	let { kind }: Props = $props();
 
 	const NUMBERS: InstrumentNumber[] = [1, 2, 3, 4, 5, 6, 7, 8];
+
+	const instruments: Instrument[] = $state([]);
+
+	/** Animates one instrument in the row as if played; the caller sounds the note. */
+	export function ring(number: InstrumentNumber) {
+		instruments[number - 1].ring();
+	}
 </script>
 
 <!-- Keyed so `fit` re-measures when the kind (and so the artwork) changes. -->
@@ -18,7 +25,7 @@
 		{#each NUMBERS as number (number)}
 			<figure>
 				<div class="art">
-					<Instrument {kind} {number} />
+					<Instrument bind:this={instruments[number - 1]} {kind} {number} />
 				</div>
 				<figcaption>{number}</figcaption>
 			</figure>

@@ -18,6 +18,11 @@ export function onWhistle({ degree, accidental, octave }: ScaleNote): boolean {
 	return accidental === 0 && (octave === 0 || (degree === 1 && octave === 1));
 }
 
+/** The whistle that plays a note, or null when no whistle can. */
+export function whistleOf(note: ScaleNote): Whistle | null {
+	return onWhistle(note) ? (formatSlot(note) as Whistle) : null;
+}
+
 /** The fraction of a melody's notes that can be played on the whistles. */
 export function playableShare(melody: string): number {
 	const notes = parseMelody(melody).filter((slot) => slot !== null);

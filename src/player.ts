@@ -140,16 +140,23 @@ function slotTime(index: number): string {
 	return `0:0:${index}`;
 }
 
+/** Transport ticks in one 16th-note slot. */
+function ticksPerSlot(): number {
+	return Tone.getTransport().PPQ / 4;
+}
+
 /**
- * Plays one 16th-note slot per entry on the bells; null entries are rests.
+ * Plays one 16th-note slot per entry on the instrument, from slot `from`; null entries are rests.
  * Calls onSlot with each slot's index as it sounds, in sync with the audio.
  */
 export async function play(
 	midis: (number | null)[],
+	kind: InstrumentKind,
 	onSlot: (index: number) => void,
-	onEnd: () => void
+	onEnd: () => void,
+	from = 0
 ): Promise<void> {
-	const bell = await getSampler("bell");
+	const sampler = await getSampler(kind);
 	stop();
 	const transport = Tone.getTransport();
 	transport.bpm.value = tempo;
@@ -159,12 +166,31 @@ export async function play(
 		index
 	}));
 	part = new Tone.Part<SlotEvent>((time, event) => {
-		if (event.midi !== null) sound("bell", bell, event.midi, "16n", time);
+		if (event.midi !== null) sound(kind, sampler, event.midi, "16n", time);
 		Tone.getDraw().schedule(() => onSlot(event.index), time);
 	}, events).start(0);
 	transport.scheduleOnce(() => {
 		stop();
 		onEnd();
 	}, slotTime(midis.length));
-	transport.start();
+	transport.start(undefined, `${from * ticksPerSlot()}i`);
+}
+
+/** Holds playback where it is; `resume` carries on from the same slot. */
+export function pause(): void {
+	Tone.getTransport().pause();
+}
+
+export function resume(): void {
+	Tone.getTransport().start();
+}
+
+/** Moves a playing or paused melody to a position in 16th slots. */
+export function seek(slot: number): void {
+	Tone.getTransport().ticks = slot * ticksPerSlot();
+}
+
+/** The playing position in 16th slots, read at audio time so it lines up with onSlot. */
+export function position(): number {
+	return Tone.getTransport().getTicksAtTime(Tone.immediate()) / ticksPerSlot();
 }

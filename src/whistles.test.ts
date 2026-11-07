@@ -7,7 +7,8 @@ import {
 	WHISTLES,
 	type Whistle,
 	whistleLoads,
-	whistleMidi
+	whistleMidi,
+	whistleOf
 } from "./whistles";
 
 const note = (token: string) => parseMelody(token)[0] as ScaleNote;
@@ -27,6 +28,19 @@ describe("onWhistle", () => {
 	it("rejects accidentals and notes outside 1–1'", () => {
 		for (const token of ["5,", "1,", "2'", "b3", "#4", "b1'"])
 			expect(onWhistle(note(token))).toBe(false);
+	});
+});
+
+describe("whistleOf", () => {
+	it("names the whistle for each note on the whistles", () => {
+		expect(WHISTLES.map((whistle) => whistleOf(note(whistle)))).toEqual([
+			...WHISTLES
+		]);
+	});
+
+	it("gives null for notes no whistle plays", () => {
+		for (const token of ["5,", "2'", "b3", "#4"])
+			expect(whistleOf(note(token))).toBeNull();
 	});
 });
 

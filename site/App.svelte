@@ -1,5 +1,6 @@
 <script lang="ts">
 	import InstrumentPicker from "./components/InstrumentPicker.svelte";
+	import JingleBellsTrack from "./components/JingleBellsTrack.svelte";
 </script>
 
 <main>
@@ -21,7 +22,7 @@
 		Jingle Bells, press 'play' to hear it:
 	</p>
 
-	<!-- show jingle bells with a play button-->
+	<JingleBellsTrack />
 
 	<p>
 		Now, I'm a massive music nerd. If I get #1 I'm buzzing. Conversely,
