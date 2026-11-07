@@ -1,0 +1,34 @@
+:root {
+	--focus-color: #f0223e;
+	--instrument-duration: 600ms;
+	--bell-swing: 8deg;
+	--bell-duration: 400ms;
+	--whistle-nudge: 3px;
+	--xylophone-shake: 0.75px;
+	--xylophone-shake-period: 60ms;
+	--xylophone-shakes: 8;
+	--wave-color: #707985;
+	--wave-opacity: 0.35;
+	--wave-gap: 4px;
+	--wave-drift: 4px;
+	--wave-stagger: 90ms;
+}
+
+/* Registered so the xylophone shake can animate them: offset oscillates, envelope decays. */
+@property --shake-offset {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+@property --shake-envelope {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+
+body {
+	margin: 0;
+	font-family: system-ui, sans-serif;
+	line-height: 1.6;
+}

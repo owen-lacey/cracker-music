@@ -10,15 +10,27 @@ Analysis repo measuring how often specific notes and scale degrees occur across 
 
 - Postlab is a local dev dependency, with its own Claude skill. Load that skill before any Postlab work and do not rely on memorised Postlab APIs.
 
+## Layout
+
+- `site/`: the blog post. Svelte 5 + Vite, TypeScript, plain scoped CSS.
+- `transcriber/`: the React transcription prototype. It is not part of the blog post.
+- `src/`: shared domain logic (carols, melody, pitch, usage, whistles) and Tone.js playback (`player`) used by `site/`, `transcriber/` and `analysis/`.
+- `site/components/`: blog components, each with a `*.stories.ts` for Storybook. Vite plugins shared by the blog and Storybook live in `site/vite.plugins.ts`; SVGs import inline as components via `?component`.
+- `analysis/`: scripts run by post-lab code cells.
+
 ## Stack
 
-pnpm, Vite, React, TypeScript, Tailwind, `tonal` (degree → pitch), `tone` (playback), ESLint (complexity ≤ 10), Vitest.
+pnpm, Vite, TypeScript, ESLint (complexity ≤ 10), Vitest, Storybook. Blog: Svelte, `@poppanator/sveltekit-svg`. Transcriber: React, Tailwind, `tonal` (degree → pitch), `tone` (playback).
 
 ## Commands
 
-- `pnpm dev`: transcription tool; a Vite middleware in `vite.config.ts` reads/writes `data/carols/`
+- `pnpm dev`: blog post dev server
+- `pnpm build`: build the blog post to `dist/`
+- `pnpm dev:transcriber`: transcription tool; a Vite middleware in `transcriber/vite.config.ts` reads/writes `data/carols/`
+- `pnpm storybook`: Storybook on port 6006 for `site/` components; `pnpm build-storybook` builds it to `storybook-static/`
 - `pnpm test`: unit tests
-- `pnpm lint`: ESLint plus `tsc --noEmit`
+- `pnpm format`: Prettier (with `prettier-plugin-svelte`) over the repo; `data/` and `.post-lab/` are ignored
+- `pnpm lint`: `prettier --check`, ESLint (including `svelte/valid-compile`), `tsc --noEmit` and `svelte-check`
 
 ## Transcription data
 

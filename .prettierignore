@@ -1,0 +1,7 @@
+dist/
+storybook-static/
+pnpm-lock.yaml
+# Written by the transcriber with JSON.stringify and by post-lab; not hand-formatted.
+data/
+.post-lab/
+.claude/
