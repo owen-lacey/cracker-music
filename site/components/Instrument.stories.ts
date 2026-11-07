@@ -1,0 +1,22 @@
+import type { Meta, StoryObj } from "@storybook/svelte-vite";
+import { INSTRUMENT_KINDS } from "../instruments";
+import Instrument from "./Instrument.svelte";
+
+const meta = {
+	title: "Instrument",
+	component: Instrument,
+	argTypes: {
+		kind: { control: "select", options: INSTRUMENT_KINDS },
+		number: { control: { type: "range", min: 1, max: 8, step: 1 } }
+	}
+} satisfies Meta<typeof Instrument>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Bell: Story = { args: { kind: "bell", number: 1 } };
+
+export const Whistle: Story = { args: { kind: "whistle", number: 1 } };
+
+export const Xylophone: Story = { args: { kind: "xylophone", number: 1 } };
