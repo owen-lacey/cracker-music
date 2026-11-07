@@ -1,7 +1,25 @@
 <svg width="58" height="93" viewBox="0 0 58 93" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M28.5497 83.9103C36.762 83.9103 43.4194 82.0462 43.4194 79.7468C43.4194 77.4473 36.762 75.5833 28.5497 75.5833C20.3375 75.5833 13.6801 77.4473 13.6801 79.7468C13.6801 82.0462 20.3375 83.9103 28.5497 83.9103Z" fill="#F0223E"/>
-<path d="M20.6901 32.1639H36.4094V79.152C36.4094 80.9363 20.6901 80.9363 20.6901 79.152V32.1639Z" fill="#F0223E"/>
-<path d="M25.1813 0H31.9182C33.041 0 33.6024 1.12281 33.7147 2.24561L36.4094 22.4561V32.5614C36.4094 34.807 20.6901 34.807 20.6901 32.5614V22.4561L23.3848 2.24561C23.4971 1.12281 24.0585 0 25.1813 0Z" fill="#E4E8EC"/>
-<path d="M25.1813 0H26.3041L24.0585 21.3333V32L22.3743 31.4386V21.3333L25.1813 0Z" fill="#ADB6C0"/>
-<path d="M26.3041 20.2105H30.7954V24.7018H26.3041V20.2105Z" fill="#59616A"/>
+<defs>
+<clipPath id="whistle-7-clip-tube"><path d="M20.6901 32.1639H36.4094V79.152C36.4094 80.9363 20.6901 80.9363 20.6901 79.152V32.1639Z"/></clipPath>
+<clipPath id="whistle-7-clip-mouthpiece"><path d="M25.1813 0H31.9182C33.041 0 33.6024 1.12281 33.7147 2.24561L36.4094 22.4561V32.5614C36.4094 34.807 20.6901 34.807 20.6901 32.5614V22.4561L23.3848 2.24561C23.4971 1.12281 24.0585 0 25.1813 0Z"/></clipPath>
+</defs>
+<g data-part="base">
+<g data-layer="fill"><path d="M28.5497 83.9103C36.762 83.9103 43.4194 82.0462 43.4194 79.7468C43.4194 77.4473 36.762 75.5833 28.5497 75.5833C20.3375 75.5833 13.6801 77.4473 13.6801 79.7468C13.6801 82.0462 20.3375 83.9103 28.5497 83.9103Z" fill="#F0223E"/></g>
+<g data-layer="line" stroke="#4C4D61" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"><path d="M28.5497 83.9103C36.762 83.9103 43.4194 82.0462 43.4194 79.7468C43.4194 77.4473 36.762 75.5833 28.5497 75.5833C20.3375 75.5833 13.6801 77.4473 13.6801 79.7468C13.6801 82.0462 20.3375 83.9103 28.5497 83.9103Z"/></g>
+</g>
+<g data-part="tube">
+<g data-layer="fill"><path d="M20.6901 32.1639H36.4094V79.152C36.4094 80.9363 20.6901 80.9363 20.6901 79.152V32.1639Z" fill="#F0223E"/></g>
+<g data-layer="shade"><rect clip-path="url(#whistle-7-clip-tube)" x="31.1696" y="31" width="7" height="53" fill="#B81E35"/></g>
+<g data-layer="line" stroke="#4C4D61" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"><path d="M20.6901 32.1639H36.4094V79.152C36.4094 80.9363 20.6901 80.9363 20.6901 79.152V32.1639Z"/></g>
+</g>
+<g data-part="mouthpiece">
+<g data-layer="fill"><path d="M25.1813 0H31.9182C33.041 0 33.6024 1.12281 33.7147 2.24561L36.4094 22.4561V32.5614C36.4094 34.807 20.6901 34.807 20.6901 32.5614V22.4561L23.3848 2.24561C23.4971 1.12281 24.0585 0 25.1813 0Z" fill="#E4E8EC"/></g>
+<g data-layer="shade"><rect clip-path="url(#whistle-7-clip-mouthpiece)" x="32.4796" y="-1" width="5" height="37" fill="#ADB6C0"/></g>
+<g data-layer="highlight"><path clip-path="url(#whistle-7-clip-mouthpiece)" d="M24.755 3.6351L22.155 22.8351V29.9351" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g data-layer="line" stroke="#4C4D61" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"><path d="M25.1813 0H31.9182C33.041 0 33.6024 1.12281 33.7147 2.24561L36.4094 22.4561V32.5614C36.4094 34.807 20.6901 34.807 20.6901 32.5614V22.4561L23.3848 2.24561C23.4971 1.12281 24.0585 0 25.1813 0Z"/></g>
+</g>
+<g data-part="window">
+<g data-layer="fill"><path d="M26.3041 20.2105H30.7954V24.7018H26.3041V20.2105Z" fill="#707985"/></g>
+<g data-layer="line" stroke="#4C4D61" stroke-width="0.7" stroke-linejoin="round" stroke-linecap="round"><path d="M26.3041 20.2105H30.7954V24.7018H26.3041V20.2105Z"/></g>
+</g>
 </svg>
