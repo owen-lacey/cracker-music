@@ -68,3 +68,27 @@ export function anchor(kind: InstrumentKind): Attachment<HTMLElement> {
 		);
 	};
 }
+
+/**
+ * Shrinks a row of instruments to fit its width on one line: sets `--fit` (at most 1) to the
+ * row's width over the artwork's natural width plus its unscaled `--instrument-gap`s.
+ * Each child of the row holds one instrument, whose first `<svg>` is its artwork.
+ */
+export const fit: Attachment<HTMLElement> = (row) => {
+	const resize = () => {
+		const items = [...row.children];
+		const artwork = items.reduce((sum, item) => {
+			const svg = item.querySelector("svg");
+			if (!svg) throw new Error("No artwork to fit in the instruments row");
+			return sum + svg.width.baseVal.value;
+		}, 0);
+		const gap = parseFloat(
+			getComputedStyle(row).getPropertyValue("--instrument-gap")
+		);
+		const natural = artwork + gap * (items.length - 1);
+		row.style.setProperty("--fit", `${Math.min(1, row.clientWidth / natural)}`);
+	};
+	const observer = new ResizeObserver(resize);
+	observer.observe(row);
+	return () => observer.disconnect();
+};

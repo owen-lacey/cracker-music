@@ -1,4 +1,5 @@
 <script lang="ts">
+	import InstrumentPicker from "./components/InstrumentPicker.svelte";
 </script>
 
 <main>
@@ -12,11 +13,11 @@
 		This usually works best in a pack where each instrument is numbered one to
 		eight:
 	</p>
-	<!-- show the instruments that you can click on to play, user can toggle between bells whistles and xylophone-->
+	<InstrumentPicker />
 
 	<p>
 		These notes make up the major scale, play them in order and it should sound
-		familiar. As well as the instruments you get some sheet music. This one is
+		familiar. As well as the instruments, you get some sheet music. This one is
 		Jingle Bells, press 'play' to hear it:
 	</p>
 
