@@ -12,9 +12,11 @@
 	interface Props {
 		kind: InstrumentKind;
 		number: InstrumentNumber;
+		/** Called each time the instrument is played, by a click or by `ring`. */
+		onring: () => void;
 	}
 
-	let { kind, number }: Props = $props();
+	let { kind, number, onring }: Props = $props();
 
 	const Artwork = $derived(artwork(kind, number));
 	let plays = $state(0);
@@ -25,6 +27,7 @@
 	export function ring() {
 		played = Artwork;
 		plays += 1;
+		onring();
 	}
 
 	function play() {
