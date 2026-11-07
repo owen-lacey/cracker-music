@@ -1,6 +1,58 @@
 import * as Tone from "tone";
 
-let synth: Tone.PolySynth | undefined;
+export const INSTRUMENT_KINDS = ["bell", "whistle", "xylophone"] as const;
+export type InstrumentKind = (typeof INSTRUMENT_KINDS)[number];
+
+type SampleFiles = Record<string, string>;
+
+/** Struck instruments ring out after the strike; blown ones sound only while the note lasts. */
+export type Envelope = "struck" | "blown";
+
+/**
+ * Recordings named by the MIDI note they sound; credited in `src/samples/CREDITS.md`.
+ * `volume` is in decibels: the whistle has no strike transient, so it is lifted to sound as loud.
+ */
+const VOICES: Record<
+	InstrumentKind,
+	{ files: SampleFiles; envelope: Envelope; volume: number }
+> = {
+	bell: {
+		files: import.meta.glob("./samples/bell/*.mp3", {
+			query: "?url",
+			import: "default",
+			eager: true
+		}),
+		envelope: "struck",
+		volume: 0
+	},
+	whistle: {
+		files: import.meta.glob("./samples/whistle/*.mp3", {
+			query: "?url",
+			import: "default",
+			eager: true
+		}),
+		envelope: "blown",
+		volume: 3
+	},
+	xylophone: {
+		files: import.meta.glob("./samples/xylophone/*.mp3", {
+			query: "?url",
+			import: "default",
+			eager: true
+		}),
+		envelope: "struck",
+		volume: 0
+	}
+};
+
+export function envelope(kind: InstrumentKind): Envelope {
+	return VOICES[kind].envelope;
+}
+
+/** Cracker instruments sound two octaves above the written melody. */
+const OCTAVE_SHIFT = 24;
+
+const samplers = new Map<InstrumentKind, Tone.Sampler>();
 
 interface SlotEvent {
 	time: string;
@@ -16,13 +68,43 @@ export const DEFAULT_TEMPO = 100;
 let tempo = DEFAULT_TEMPO;
 let transpose = 0;
 
-function getSynth(): Tone.PolySynth {
-	synth ??= new Tone.PolySynth(Tone.Synth).toDestination();
-	return synth;
+function sampleUrls(files: SampleFiles): Record<number, string> {
+	return Object.fromEntries(
+		Object.entries(files).map(([path, url]) => [
+			Number(path.slice(path.lastIndexOf("/") + 1, -".mp3".length)),
+			url
+		])
+	);
+}
+
+/** Creates the instrument's sampler on first use and waits for its recordings to load. */
+async function getSampler(kind: InstrumentKind): Promise<Tone.Sampler> {
+	await Tone.start();
+	const sampler =
+		samplers.get(kind) ??
+		new Tone.Sampler({
+			urls: sampleUrls(VOICES[kind].files),
+			volume: VOICES[kind].volume
+		}).toDestination();
+	samplers.set(kind, sampler);
+	await Tone.loaded();
+	return sampler;
 }
 
 function frequency(midi: number): number {
-	return Tone.Frequency(midi + transpose, "midi").toFrequency();
+	return Tone.Frequency(midi + OCTAVE_SHIFT + transpose, "midi").toFrequency();
+}
+
+function sound(
+	kind: InstrumentKind,
+	sampler: Tone.Sampler,
+	midi: number,
+	duration: Tone.Unit.Time,
+	time?: Tone.Unit.Time
+): void {
+	if (VOICES[kind].envelope === "struck")
+		sampler.triggerAttack(frequency(midi), time);
+	else sampler.triggerAttackRelease(frequency(midi), duration, time);
 }
 
 /** Sets the tempo, taking effect immediately if a melody is playing. */
@@ -36,9 +118,11 @@ export function setTranspose(semitones: number): void {
 	transpose = semitones;
 }
 
-export async function preview(midi: number): Promise<void> {
-	await Tone.start();
-	getSynth().triggerAttackRelease(frequency(midi), "8n");
+export async function preview(
+	midi: number,
+	kind: InstrumentKind = "bell"
+): Promise<void> {
+	sound(kind, await getSampler(kind), midi, "8n");
 }
 
 export function stop(): void {
@@ -48,6 +132,7 @@ export function stop(): void {
 	Tone.getDraw().cancel();
 	part?.dispose();
 	part = undefined;
+	for (const sampler of samplers.values()) sampler.releaseAll();
 }
 
 /** Position of a 16th-note slot, in bars:beats:sixteenths, so it follows tempo changes. */
@@ -56,7 +141,7 @@ function slotTime(index: number): string {
 }
 
 /**
- * Plays one 16th-note slot per entry; null entries are rests.
+ * Plays one 16th-note slot per entry on the bells; null entries are rests.
  * Calls onSlot with each slot's index as it sounds, in sync with the audio.
  */
 export async function play(
@@ -64,7 +149,7 @@ export async function play(
 	onSlot: (index: number) => void,
 	onEnd: () => void
 ): Promise<void> {
-	await Tone.start();
+	const bell = await getSampler("bell");
 	stop();
 	const transport = Tone.getTransport();
 	transport.bpm.value = tempo;
@@ -74,8 +159,7 @@ export async function play(
 		index
 	}));
 	part = new Tone.Part<SlotEvent>((time, event) => {
-		if (event.midi !== null)
-			getSynth().triggerAttackRelease(frequency(event.midi), "16n", time);
+		if (event.midi !== null) sound("bell", bell, event.midi, "16n", time);
 		Tone.getDraw().schedule(() => onSlot(event.index), time);
 	}, events).start(0);
 	transport.scheduleOnce(() => {

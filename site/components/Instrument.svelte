@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { preview } from "../../src/player";
+	import { envelope, preview, type InstrumentKind } from "../../src/player";
 	import { whistleMidi } from "../../src/whistles";
 	import {
 		anchor,
 		artwork,
 		whistleFor,
-		type InstrumentKind,
 		type InstrumentNumber
 	} from "../instruments";
 	import SoundWaves from "./SoundWaves.svelte";
@@ -23,7 +22,7 @@
 	const playing = $derived(played === Artwork);
 
 	function play() {
-		void preview(whistleMidi(whistleFor(number)));
+		void preview(whistleMidi(whistleFor(number)), kind);
 		played = Artwork;
 		plays += 1;
 	}
@@ -37,7 +36,7 @@
 					<Artwork />
 				</span>
 				{#if playing}
-					<SoundWaves />
+					<SoundWaves envelope={envelope(kind)} />
 				{/if}
 			{/key}
 		</span>
@@ -68,12 +67,6 @@
 		position: relative;
 	}
 
-	.bell .playing,
-	.whistle .playing {
-		animation-duration: var(--instrument-duration);
-		animation-timing-function: ease-out;
-	}
-
 	.bell .playing {
 		transform-origin: var(--pivot-x) var(--pivot-y);
 		animation-name: ring;
@@ -82,11 +75,12 @@
 
 	.whistle .playing {
 		animation-name: blow;
+		animation-duration: var(--whistle-duration);
 	}
 
 	/*
 	 * The xylophone's board (its first shape) stays put; only the metal bar and its pins shake.
-	 * A steady oscillation times a decaying envelope, like a struck bar ringing out.
+	 * A steady oscillation times an envelope that falls fast then lingers, like the bar's ring.
 	 */
 	.xylophone .playing :global(svg > :not(:first-child)) {
 		translate: calc(var(--shake-offset) * var(--shake-envelope)) 0;
@@ -95,7 +89,7 @@
 			var(--xylophone-shake-period),
 			calc(var(--xylophone-shake-period) * var(--xylophone-shakes));
 		animation-iteration-count: var(--xylophone-shakes), 1;
-		animation-timing-function: linear, ease-out;
+		animation-timing-function: linear, var(--ring-easing);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -105,20 +99,41 @@
 		}
 	}
 
-	/* A quick flick left, then a slower settle back to centre. */
+	/*
+	 * A flick of the wrist: the bell whips out, accelerating, and stops dead as the clapper
+	 * strikes (kept under 50 ms so it lands with the sound), then rocks back in shrinking swings.
+	 */
 	@keyframes ring {
 		from {
+			animation-timing-function: cubic-bezier(0.5, 0, 1, 1);
+		}
+		6% {
+			transform: rotate(var(--bell-swing));
 			animation-timing-function: ease-out;
 		}
-		25% {
-			transform: rotate(var(--bell-swing));
+		28% {
+			transform: rotate(calc(var(--bell-swing) * -0.4));
+			animation-timing-function: ease-in-out;
+		}
+		50% {
+			transform: rotate(calc(var(--bell-swing) * 0.18));
+			animation-timing-function: ease-in-out;
+		}
+		72% {
+			transform: rotate(calc(var(--bell-swing) * -0.07));
 			animation-timing-function: ease-in-out;
 		}
 	}
 
+	/* Eased into the lips as the breath builds, held while the note sounds, then let go. */
 	@keyframes blow {
-		25% {
+		from {
+			animation-timing-function: ease-out;
+		}
+		60%,
+		75% {
 			transform: translateY(var(--whistle-nudge));
+			animation-timing-function: ease-in;
 		}
 	}
 

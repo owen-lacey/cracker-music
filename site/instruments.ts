@@ -1,10 +1,8 @@
 import type { Component } from "svelte";
 import type { Attachment } from "svelte/attachments";
 import type { SVGAttributes } from "svelte/elements";
+import type { InstrumentKind } from "../src/player";
 import { WHISTLES, type Whistle } from "../src/whistles";
-
-export const INSTRUMENT_KINDS = ["bell", "whistle", "xylophone"] as const;
-export type InstrumentKind = (typeof INSTRUMENT_KINDS)[number];
 
 /** Cracker instruments are numbered 1–8, low to high. */
 export type InstrumentNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;

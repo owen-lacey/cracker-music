@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { INSTRUMENT_KINDS } from "../instruments";
+import { INSTRUMENT_KINDS } from "../../src/player";
 import Instrument from "./Instrument.svelte";
 
 const meta = {

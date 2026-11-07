@@ -1,10 +1,17 @@
 <script lang="ts">
-	/** Faint arcs either side of an instrument's sounding part; they play once on mount. */
+	import type { Envelope } from "../../src/player";
+
+	/**
+	 * Faint arcs either side of an instrument's sounding part; they play once on mount.
+	 * Struck arcs appear at once and die away with the ring; blown arcs swell, then stop with the breath.
+	 */
 	const SIDES = ["left", "right"] as const;
+
+	let { envelope }: { envelope: Envelope } = $props();
 </script>
 
 {#each SIDES as side (side)}
-	<span class="waves {side}" aria-hidden="true">
+	<span class="waves {side} {envelope}" aria-hidden="true">
 		<svg viewBox="0 0 10 24" width="10" height="24">
 			<path d="M2 7 Q6 12 2 17" />
 			<path d="M5 3 Q12 12 5 21" />
@@ -41,18 +48,43 @@
 		stroke-width: 1.25;
 		stroke-linecap: round;
 		opacity: 0;
-		animation: wave var(--instrument-duration) ease-out forwards;
+		animation-fill-mode: forwards;
 	}
 
 	path:nth-child(2) {
 		animation-delay: var(--wave-stagger);
 	}
 
-	@keyframes wave {
-		30% {
+	.struck path {
+		animation-name: ring-out;
+		animation-duration: var(--ring-duration);
+		animation-timing-function: var(--ring-easing);
+	}
+
+	.blown path {
+		animation-name: swell;
+		animation-duration: var(--whistle-duration);
+	}
+
+	@keyframes ring-out {
+		from {
 			opacity: var(--wave-opacity);
 		}
-		100% {
+		to {
+			opacity: 0;
+			transform: translateX(var(--wave-drift));
+		}
+	}
+
+	@keyframes swell {
+		from {
+			animation-timing-function: ease-out;
+		}
+		75% {
+			opacity: var(--wave-opacity);
+			animation-timing-function: ease-in;
+		}
+		to {
 			opacity: 0;
 			transform: translateX(var(--wave-drift));
 		}
