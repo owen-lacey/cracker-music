@@ -18,6 +18,7 @@ Analysis repo measuring how often specific notes and scale degrees occur across 
 - `src/samples/<kind>/<midi>.mp3`: one recording per note for each instrument kind, played through `Tone.Sampler`. All are CC0, so the post needs no credits; `src/samples/CREDITS.md` lists every file's source and how it was edited.
 - `site/components/`: blog components, each with a `*.stories.ts` for Storybook. Vite plugins shared by the blog and Storybook live in `site/vite.plugins.ts`; SVGs import inline as components via `?component`.
 - `analysis/`: scripts run by post-lab code cells.
+- `scripts/slugs.ts`: writes the `Slug` type (every `data/carols/<slug>.json`) to `site/slugs.ts`, which is gitignored.
 
 ## Stack
 
@@ -26,10 +27,11 @@ pnpm, Vite, TypeScript, ESLint (complexity ≤ 10), Vitest, Storybook. Blog: Sve
 ## Commands
 
 - `pnpm dev`: blog post dev server
-- `pnpm build`: build the blog post to `dist/`
+- `pnpm build`: type-check with `svelte-check`, then build the blog post to `dist/`
 - `pnpm dev:transcriber`: transcription tool; a Vite middleware in `transcriber/vite.config.ts` reads/writes `data/carols/`
 - `pnpm storybook`: Storybook on port 6006 for `site/` components; `pnpm build-storybook` builds it to `storybook-static/`
 - `pnpm test`: unit tests
+- `pnpm slugs`: regenerate `site/slugs.ts`; `dev`, `build`, `storybook`, `build-storybook` and `lint` run it first
 - `pnpm format`: Prettier (with `prettier-plugin-svelte`) over the repo; `data/` and `.post-lab/` are ignored
 - `pnpm lint`: `prettier --check`, ESLint (including `svelte/valid-compile`), `tsc --noEmit` and `svelte-check`
 

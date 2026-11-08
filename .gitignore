@@ -1,3 +1,5 @@
 node_modules/
 dist/
 storybook-static/
+# Written by `pnpm slugs`.
+site/slugs.ts
