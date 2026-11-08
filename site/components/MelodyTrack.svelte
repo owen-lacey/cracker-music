@@ -18,6 +18,7 @@
 		setTempo,
 		stop
 	} from "../../src/player";
+	import { swingDelay } from "../../src/swing";
 	import { noteLabel } from "../instruments";
 	import { selection } from "../selection.svelte";
 
@@ -26,6 +27,8 @@
 		slots: Slot[];
 		/** Quarter notes per minute; a change takes effect straight away while playing. */
 		tempo: number;
+		/** Whether the melody plays swung; odd slots are drawn as late as they sound. */
+		swing: boolean;
 		/** Playing position in 16th slots; the track slides so this slot sits on the playhead. */
 		at?: number;
 		onslot?: (index: number) => void;
@@ -37,6 +40,7 @@
 		title,
 		slots,
 		tempo,
+		swing,
 		at = $bindable(0),
 		onslot,
 		children
@@ -83,7 +87,7 @@
 		status = "loading";
 		sounding = null;
 		setTempo(tempo);
-		await play(midis, selection.kind, onSlot, end, from);
+		await play(midis, swing, selection.kind, onSlot, end, from);
 		/* Another track may have taken the player while the instrument loaded. */
 		if (player.owner === self) status = "playing";
 	}
@@ -240,6 +244,7 @@
 			{#each notes as note (note.index)}
 				<li
 					style:--index={note.index}
+					style:--delay={swingDelay(note.index, swing)}
 					class:sounding={note.index === sounding}
 					class:past={note.index !== sounding && note.index + 1 <= at}
 				>
@@ -309,7 +314,7 @@
 	.notes li {
 		position: absolute;
 		top: 50%;
-		left: calc(var(--index) * var(--track-slot));
+		left: calc((var(--index) + var(--delay)) * var(--track-slot));
 		translate: -50% -50%;
 		color: var(--ink);
 		font-size: var(--track-font-size);

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isSwung } from "../../src/carols";
 	import { parseMelody } from "../../src/melody";
 	import { whistleOf } from "../../src/whistles";
 	import { numberFor } from "../instruments";
@@ -30,7 +31,13 @@
 	<Instruments bind:this={instruments} kind={selection.kind} />
 	<!-- A new carol gets a new track, which stops the old one's playback. -->
 	{#key slug}
-		<MelodyTrack title={sheet.title} {slots} tempo={TEMPO} onslot={ring} />
+		<MelodyTrack
+			title={sheet.title}
+			{slots}
+			tempo={TEMPO}
+			swing={isSwung(slug)}
+			onslot={ring}
+		/>
 	{/key}
 </figure>
 

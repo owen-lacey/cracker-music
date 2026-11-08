@@ -1,5 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react";
-import { type Carol, carols, type Sheet } from "../src/carols";
+import { type Carol, carols, isSwung, type Sheet } from "../src/carols";
 import { CarolList } from "./components/CarolList";
 import { MelodyView } from "./components/MelodyView";
 import { Pad } from "./components/Pad";
@@ -187,18 +187,18 @@ export function App() {
 			return;
 		}
 		const start = editor.selection ? selectionRange(editor.selection).start : 0;
-		const midis = editor.slots
-			.slice(start)
-			.map((slot) => (slot ? midiFor(slot) : null));
+		const midis = editor.slots.map((slot) => (slot ? midiFor(slot) : null));
 		setPlaying(true);
 		void play(
 			midis,
+			isSwung(carol.slug),
 			"bell",
-			(index) => setActiveSlot(start + index),
+			setActiveSlot,
 			() => {
 				setPlaying(false);
 				setActiveSlot(null);
-			}
+			},
+			start
 		);
 	}
 

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { isSwung } from "../../src/carols";
 	import { formatSlot, parseMelody } from "../../src/melody";
+	import { swingDelay } from "../../src/swing";
 	import { fold } from "../../src/usage";
 	import { whistleOf } from "../../src/whistles";
 	import { numberFor, type InstrumentNumber } from "../instruments";
@@ -16,13 +18,14 @@
 	const NUMBERS: InstrumentNumber[] = [1, 2, 3, 4, 5, 6, 7, 8];
 
 	const sheet = $derived(sheetFor(slug));
+	const swing = $derived(isSwung(slug));
 	/** The melody with notes outside the whistles' octave moved into it, so it plays and counts as the whistles would. */
 	const slots = $derived(
 		parseMelody(sheet.melody).map(
 			(slot) => slot && fold(slot, { octaves: true, accidentals: false })
 		)
 	);
-	/** Every note with the instrument number that plays it, in melody order. */
+	/** Every note with the instrument number that plays it and the slot position it sounds at, in melody order. */
 	const notes = $derived(
 		slots.flatMap((slot, index) => {
 			if (slot === null) return [];
@@ -31,14 +34,19 @@
 				throw new Error(
 					`${sheet.title} has ${formatSlot(slot)}, off the whistles`
 				);
-			return [{ index, number: numberFor(whistle) }];
+			return [
+				{
+					sounds: index + swingDelay(index, swing),
+					number: numberFor(whistle)
+				}
+			];
 		})
 	);
 
 	function tally(upTo: number): number[] {
 		const counts = NUMBERS.map(() => 0);
 		for (const note of notes)
-			if (note.index < upTo) counts[note.number - 1] += 1;
+			if (note.sounds < upTo) counts[note.number - 1] += 1;
 		return counts;
 	}
 
@@ -54,7 +62,7 @@
 
 	/** A note counts once its slot sounds, so scrubbing either way recounts. */
 	const counts = $derived(tally(at));
-	const latest = $derived(notes.findLast((note) => note.index < at)?.number);
+	const latest = $derived(notes.findLast((note) => note.sounds < at)?.number);
 </script>
 
 <figure class="tally">
@@ -81,6 +89,7 @@
 			title={sheet.title}
 			{slots}
 			tempo={fast ? TEMPO * 2 : TEMPO}
+			{swing}
 			bind:at
 		>
 			<button class="speed" aria-pressed={fast} onclick={() => (fast = !fast)}>

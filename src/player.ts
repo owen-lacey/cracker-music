@@ -1,4 +1,5 @@
 import * as Tone from "tone";
+import { SWING_DELAY } from "./swing";
 
 export const INSTRUMENT_KINDS = ["bell", "whistle", "xylophone"] as const;
 export type InstrumentKind = (typeof INSTRUMENT_KINDS)[number];
@@ -158,11 +159,19 @@ function ticksPerSlot(): number {
 }
 
 /**
+ * Tone delays each off-subdivision tick by `swing` × two-thirds of a subdivision pair; with a
+ * one-slot subdivision that delay is `swing` × ⅔ slot, so this amount delays odd slots by SWING_DELAY.
+ */
+const TONE_SWING = SWING_DELAY * (3 / 2);
+
+/**
  * Plays one 16th-note slot per entry on the instrument, from slot `from`; null entries are rests.
- * Calls onSlot with each slot's index as it sounds, in sync with the audio.
+ * A swung melody sounds each odd slot SWING_DELAY late. Calls onSlot with each slot's index as
+ * it sounds, in sync with the audio.
  */
 export async function play(
 	midis: (number | null)[],
+	swing: boolean,
 	kind: InstrumentKind,
 	onSlot: (index: number) => void,
 	onEnd: () => void,
@@ -172,6 +181,8 @@ export async function play(
 	stop();
 	const transport = Tone.getTransport();
 	transport.bpm.value = tempo;
+	transport.swingSubdivision = "16n";
+	transport.swing = swing ? TONE_SWING : 0;
 	const events = midis.map((midi, index) => ({
 		time: slotTime(index),
 		midi,

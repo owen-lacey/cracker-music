@@ -8,6 +8,8 @@ export interface CarolEntry {
 	included: boolean;
 	/** The key the carol is in: "major" or "minor". */
 	mode: string;
+	/** Whether the carol plays swung; see `src/swing.ts`. */
+	swing: boolean;
 }
 
 export const MODES = ["major", "minor"] as const;
@@ -62,3 +64,14 @@ export function includedCarols(entries: CarolEntry[]): Carol[] {
 }
 
 export const carols = includedCarols(carolList);
+
+/** Whether the carol with this slug plays swung, read from any row of the entries, included or not. */
+export function isSwung(
+	slug: string,
+	entries: CarolEntry[] = carolList
+): boolean {
+	const entry = entries.find(({ title }) => slugify(title) === slug);
+	if (entry === undefined)
+		throw new Error(`No carol with slug "${slug}" in data/carols.json`);
+	return entry.swing;
+}

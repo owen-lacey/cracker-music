@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { carols, includedCarols, slugify } from "./carols";
+import { carols, includedCarols, isSwung, slugify } from "./carols";
 
 describe("includedCarols", () => {
 	it("reads every carol from data/carols.json with unique slugs", () => {
@@ -24,10 +24,16 @@ describe("includedCarols", () => {
 					title: "It came upon the midnight clear",
 					tune: "Noel",
 					included: true,
-					mode: "major"
+					mode: "major",
+					swing: false
 				},
-				{ title: "Christ is born (Il est né)", included: true, mode: "minor" },
-				{ title: "Not chosen", included: false, mode: "major" }
+				{
+					title: "Christ is born (Il est né)",
+					included: true,
+					mode: "minor",
+					swing: false
+				},
+				{ title: "Not chosen", included: false, mode: "major", swing: false }
 			])
 		).toEqual([
 			{
@@ -47,8 +53,32 @@ describe("includedCarols", () => {
 
 	it("rejects a mode that is neither major nor minor", () => {
 		expect(() =>
-			includedCarols([{ title: "Odd one", included: true, mode: "dorian" }])
+			includedCarols([
+				{ title: "Odd one", included: true, mode: "dorian", swing: false }
+			])
 		).toThrow('"Odd one" has mode "dorian"');
+	});
+});
+
+describe("isSwung", () => {
+	const entries = [
+		{ title: "Swung one", included: true, mode: "major", swing: true },
+		{ title: "Straight one", included: false, mode: "major", swing: false }
+	];
+
+	it("reads the swing of any row by slug, included or not", () => {
+		expect(isSwung("swung-one", entries)).toBe(true);
+		expect(isSwung("straight-one", entries)).toBe(false);
+	});
+
+	it("marks Rudolph as swung in data/carols.json", () => {
+		expect(isSwung("rudolph-the-red-nosed-reindeer")).toBe(true);
+	});
+
+	it("rejects a slug with no row", () => {
+		expect(() => isSwung("missing", entries)).toThrow(
+			'No carol with slug "missing"'
+		);
 	});
 });
 
