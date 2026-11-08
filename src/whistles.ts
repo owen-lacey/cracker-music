@@ -30,6 +30,11 @@ export function playableShare(melody: string): number {
 	return notes.filter(onWhistle).length / notes.length;
 }
 
+/** The share of a melody's notes on the whistles as a whole percent, rounded down so only a melody with every note on the whistles reads 100. */
+export function playablePercent(melody: string): number {
+	return Math.floor(playableShare(melody) * 100);
+}
+
 /** How many notes each whistle plays across the melodies, with octaves merged (1' keeps its own whistle); accidentals are left out. */
 export function whistleLoads(melodies: string[]): Record<Whistle, number> {
 	const loads = Object.fromEntries(

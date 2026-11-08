@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CarolPicker from "./components/CarolPicker.svelte";
 	import CarolTally from "./components/CarolTally.svelte";
 	import CarolTrack from "./components/CarolTrack.svelte";
 	import InstrumentPicker from "./components/InstrumentPicker.svelte";
@@ -62,7 +63,7 @@
 		Change the selected carol to see the tally counts for the instruments, there
 		are 22 in total:
 	</p>
-	<!-- Like carol tally, but the user can change the selected carol. Dropdown shows what % of notes fit on the scale -->
+	<CarolPicker />
 
 	<p>
 		Combining all 22 carols gives us the answer to "is my whistle any good?"

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseMelody, type ScaleNote } from "./melody";
 import {
 	onWhistle,
+	playablePercent,
 	playableShare,
 	splitWhistles,
 	WHISTLES,
@@ -51,6 +52,16 @@ describe("playableShare", () => {
 
 	it("throws on a melody with no notes", () => {
 		expect(() => playableShare("   ")).toThrow("Melody has no notes");
+	});
+});
+
+describe("playablePercent", () => {
+	it("reads 100 when every note is on the whistles", () => {
+		expect(playablePercent("1 3 5 1'")).toBe(100);
+	});
+
+	it("rounds down, so a melody with a note off the whistles never reads 100", () => {
+		expect(playablePercent("1 2 3,")).toBe(66);
 	});
 });
 
