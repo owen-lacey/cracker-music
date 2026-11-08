@@ -6,7 +6,7 @@
 <script lang="ts">
 	import { Pause, Play, RotateCcw } from "@lucide/svelte";
 	import { onDestroy, untrack, type Snippet } from "svelte";
-	import { formatSlot, type Slot } from "../../src/melody";
+	import { type Slot } from "../../src/melody";
 	import { midiFor } from "../../src/pitch";
 	import {
 		pause,
@@ -18,6 +18,7 @@
 		setTempo,
 		stop
 	} from "../../src/player";
+	import { noteLabel } from "../instruments";
 	import { selection } from "../selection.svelte";
 
 	interface Props {
@@ -50,7 +51,7 @@
 	const midis = $derived(slots.map((slot) => (slot ? midiFor(slot) : null)));
 	const notes = $derived(
 		slots.flatMap((slot, index) =>
-			slot ? [{ index, label: formatSlot(slot) }] : []
+			slot ? [{ index, label: noteLabel(slot) }] : []
 		)
 	);
 
