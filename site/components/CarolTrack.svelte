@@ -12,9 +12,6 @@
 	/** The carol's slug: its data/carols/<slug>.json filename. */
 	let { slug }: { slug: Slug } = $props();
 
-	/** Half the default ♩ = 100, so each slot lasts 0.3 s. */
-	const TEMPO = 50;
-
 	const sheet = $derived(sheetFor(slug));
 	const slots = $derived(parseMelody(sheet.melody));
 
@@ -34,7 +31,7 @@
 		<MelodyTrack
 			title={sheet.title}
 			{slots}
-			tempo={TEMPO}
+			tempo={sheet.tempo}
 			swing={isSwung(slug)}
 			onslot={ring}
 		/>

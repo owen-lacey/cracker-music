@@ -26,6 +26,8 @@ export interface Carol {
 export interface Sheet {
 	title: string;
 	tune?: string;
+	/** Playback tempo in quarter notes per minute. */
+	tempo: number;
 	melody: string;
 }
 

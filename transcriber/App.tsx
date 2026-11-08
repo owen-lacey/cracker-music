@@ -31,10 +31,11 @@ import { isFormField, shortcutFor } from "./shortcuts";
 
 const PREVIEWED_ACTIONS = new Set<EditorAction["type"]>(["insert", "octave"]);
 
-function toSheet(carol: Carol, editor: EditorState): Sheet {
+function toSheet(carol: Carol, editor: EditorState, tempo: number): Sheet {
 	return {
 		title: carol.title,
 		tune: carol.tune,
+		tempo,
 		melody: formatMelody(editor.slots)
 	};
 }
@@ -47,6 +48,11 @@ function initialCarol(): Carol {
 /** The draft if there is one, else the saved melody. */
 function melodyFor(slug: string, saved: Record<string, Sheet>): string {
 	return loadDrafts()[slug] ?? saved[slug]?.melody ?? "";
+}
+
+/** The saved tempo, or the default for a carol not saved yet. */
+function tempoFor(slug: string, saved: Record<string, Sheet>): number {
+	return saved[slug]?.tempo ?? DEFAULT_TEMPO;
 }
 
 function editorFor(melody: string): EditorState {
@@ -72,13 +78,14 @@ export function App() {
 	const [tempo, setTempoState] = useState(DEFAULT_TEMPO);
 	const [transpose, setTransposeState] = useState(0);
 
-	const sheet = toSheet(carol, editor);
+	const sheet = toSheet(carol, editor, tempo);
 	const dirty = isDirty(sheet, saved[carol.slug]);
 
 	const onLoaded = useEffectEvent((sheets: Record<string, Sheet>) => {
 		setSaved(sheets);
 		setLoaded(true);
 		setEditor(editorFor(melodyFor(carol.slug, sheets)));
+		changeTempo(tempoFor(carol.slug, sheets));
 	});
 
 	useEffect(() => {
@@ -149,6 +156,7 @@ export function App() {
 		setCarol(next);
 		storeSelectedSlug(next.slug);
 		setEditor(editorFor(melodyFor(next.slug, saved)));
+		changeTempo(tempoFor(next.slug, saved));
 		setStatus("");
 	}
 

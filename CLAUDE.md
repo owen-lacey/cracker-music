@@ -43,7 +43,8 @@ pnpm, Vite, TypeScript, ESLint (complexity ≤ 10), Vitest, Storybook. Blog: Sve
 
 - `data/carols.json` is the single list of carols in the post: `title`, `tune?`, `included`, `mode`, `swing`. Code reads it through `carols` in `src/carols.ts`, which leaves out rows where `included` is false; the post-lab cell `c4r01s7a` shows it as a table.
 - Swung carols are still written on the straight slot grid; playback (`src/swing.ts`) sounds every odd slot a third of a slot late, so slot pairs play long-short 2:1. Read swing with `isSwung(slug)`.
-- One file per carol: `data/carols/<slug>.json` with `title`, `tune?`, `melody`.
+- One file per carol: `data/carols/<slug>.json` with `title`, `tune?`, `tempo`, `melody`.
+- `tempo` is the ♩ the blog plays the carol at (the tally's 2× doubles it). Set it with the transcriber's tempo slider; Save writes it with the melody.
 - `melody` is one token per 16th-note slot: `1`–`7` scale degree, `'`/`,` suffix for octave above/below, `#`/`b` prefix for sharp/flat, space for rest. No holds or bar lines.
-- No key is stored: degrees are read against the major scale (a minor third is `b3`). Playback defaults to B♭ major (middle-octave 1 = B♭3) at ♩ = 100. Instruments sound two octaves above that (`OCTAVE_SHIFT` in `src/player.ts`), at real cracker-toy pitch. Carol playback and the transcriber use the bell. The key and tempo sliders change playback only and are never saved.
+- No key is stored: degrees are read against the major scale (a minor third is `b3`). Playback defaults to B♭ major (middle-octave 1 = B♭3) at ♩ = 100. Instruments sound two octaves above that (`OCTAVE_SHIFT` in `src/player.ts`), at real cracker-toy pitch. Carol playback and the transcriber use the bell. The key slider changes playback only and is never saved.
 - Parse with `parseMelody` (`src/melody.ts`); convert to MIDI with `midiFor` (`src/pitch.ts`).
