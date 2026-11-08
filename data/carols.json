@@ -77,7 +77,7 @@
     "title": "Frosty the snowman",
     "included": true,
     "mode": "major",
-    "swing": false
+    "swing": true
   },
   {
     "title": "Gaudete",
