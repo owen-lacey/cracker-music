@@ -42,6 +42,13 @@
 	--track-line: 2px;
 	--track-line-color: #e4e8ec;
 	--track-past-opacity: 0.35;
+	--tally-height: 8rem;
+	--tally-bar-width: 1.5rem;
+	--tally-bar-radius: 4px;
+	--tally-bar-color: #707985;
+	/* Narrows on phones so all eight bars fit the column. */
+	--tally-gap: min(var(--instrument-gap), 3vw);
+	--tally-duration: 100ms;
 	--control-size: 1.5rem;
 	/* Heavier than Lucide's 2 so the outline replay arrow weighs the same as the solid icons. */
 	--control-stroke: 2.5;
