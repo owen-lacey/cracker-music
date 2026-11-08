@@ -87,10 +87,10 @@
 	}
 
 	/*
-	 * The xylophone's board (its first shape) stays put; only the metal bar and its pins shake.
+	 * The xylophone's frame stays put; every other part (the metal bar and its pins) shakes.
 	 * A steady oscillation times an envelope that falls fast then lingers, like the bar's ring.
 	 */
-	.xylophone .playing :global(svg > :not(:first-child)) {
+	.xylophone .playing :global(svg > [data-part]:not([data-part="frame"])) {
 		translate: calc(var(--shake-offset) * var(--shake-envelope)) 0;
 		animation-name: shake, quieten;
 		animation-duration:

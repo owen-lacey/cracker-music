@@ -14,8 +14,8 @@ import {
 const note = (token: string) => parseMelody(token)[0] as ScaleNote;
 
 describe("whistleMidi", () => {
-	it("plays the C major scale from C4 to C5", () => {
-		expect(WHISTLES.map(whistleMidi)).toEqual([60, 62, 64, 65, 67, 69, 71, 72]);
+	it("plays the Bb major scale from Bb3 to Bb4", () => {
+		expect(WHISTLES.map(whistleMidi)).toEqual([58, 60, 62, 63, 65, 67, 69, 70]);
 	});
 });
 

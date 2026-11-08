@@ -6,7 +6,7 @@ import { fold } from "./usage";
 export const WHISTLES = ["1", "2", "3", "4", "5", "6", "7", "1'"] as const;
 export type Whistle = (typeof WHISTLES)[number];
 
-/** MIDI pitch a whistle sounds, read against C major. */
+/** MIDI pitch a whistle sounds, read against Bb major. */
 export function whistleMidi(whistle: Whistle): number {
 	const [note] = parseMelody(whistle);
 	if (note === null) throw new Error(`Whistle ${whistle} is not a note`);

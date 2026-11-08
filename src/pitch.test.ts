@@ -7,17 +7,17 @@ function midis(melody: string): number[] {
 }
 
 describe("midiFor", () => {
-	it("maps degrees to C major with the middle tonic at C4", () => {
-		expect(midis("1234567")).toEqual([60, 62, 64, 65, 67, 69, 71]);
+	it("maps degrees to Bb major with the middle tonic at Bb3", () => {
+		expect(midis("1234567")).toEqual([58, 60, 62, 63, 65, 67, 69]);
 	});
 
 	it("maps octaves and accidentals", () => {
-		expect(midis("1'b7,#4")).toEqual([72, 58, 66]);
+		expect(midis("1'b7,#4")).toEqual([70, 56, 64]);
 	});
 });
 
 describe("keyName", () => {
-	it("names the key a transposition from C lands in", () => {
-		expect([-6, -1, 0, 2, 5].map(keyName)).toEqual(["Gb", "B", "C", "D", "F"]);
+	it("names the key a transposition from Bb lands in", () => {
+		expect([-6, -1, 0, 2, 5].map(keyName)).toEqual(["E", "A", "Bb", "C", "Eb"]);
 	});
 });

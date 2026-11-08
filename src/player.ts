@@ -62,6 +62,11 @@ interface SlotEvent {
 
 let part: Tone.Part<SlotEvent> | undefined;
 
+/** The instrument the melody plays on; `setKind` swaps it without stopping playback. */
+let voice: { kind: InstrumentKind; sampler: Tone.Sampler } | undefined;
+/** The kind last asked for, so an earlier, slower load does not win. */
+let wantedKind: InstrumentKind | undefined;
+
 /** Playback tempo in quarter notes per minute. */
 export const DEFAULT_TEMPO = 100;
 
@@ -163,7 +168,7 @@ export async function play(
 	onEnd: () => void,
 	from = 0
 ): Promise<void> {
-	const sampler = await getSampler(kind);
+	await setKind(kind);
 	stop();
 	const transport = Tone.getTransport();
 	transport.bpm.value = tempo;
@@ -173,7 +178,8 @@ export async function play(
 		index
 	}));
 	part = new Tone.Part<SlotEvent>((time, event) => {
-		if (event.midi !== null) sound(kind, sampler, event.midi, "16n", time);
+		if (voice && event.midi !== null)
+			sound(voice.kind, voice.sampler, event.midi, "16n", time);
 		Tone.getDraw().schedule(() => onSlot(event.index), time);
 	}, events).start(0);
 	/* Fires a look-ahead early; the end waits for the audio, as onSlot does, and the last note rings on. */
@@ -186,6 +192,15 @@ export async function play(
 	settledAt = Tone.now();
 	/* Tone reads ticks notation as whole numbers only; "224.64i" would be taken as seconds. */
 	transport.start(settledAt, `${Math.round(from * ticksPerSlot())}i`);
+}
+
+/** Plays the melody on this instrument from the next note, once its recordings load. */
+export async function setKind(kind: InstrumentKind): Promise<void> {
+	wantedKind = kind;
+	const sampler = await getSampler(kind);
+	if (wantedKind !== kind) return;
+	voice?.sampler.releaseAll();
+	voice = { kind, sampler };
 }
 
 /**

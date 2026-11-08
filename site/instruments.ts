@@ -60,16 +60,16 @@ export function numberFor(whistle: Whistle): InstrumentNumber {
 }
 
 /**
- * Which children of each artwork's <svg> to measure: sound waves sit either side of `span`,
- * level with the middle of `level`; bells swing from the middle of `pivot`, their handle.
+ * Which parts (`data-part` groups) of each artwork to measure: sound waves sit either side of
+ * `span`, level with the middle of `level`; bells swing from the middle of `pivot`, their handle.
  */
 const PARTS: Record<
 	InstrumentKind,
-	{ span: number; level: number; pivot?: number }
+	{ span: string; level: string; pivot?: string }
 > = {
-	bell: { span: 1, level: 1, pivot: 0 },
-	whistle: { span: 2, level: 4 },
-	xylophone: { span: 0, level: 0 }
+	bell: { span: "body", level: "body", pivot: "handle" },
+	whistle: { span: "mouthpiece", level: "window" },
+	xylophone: { span: "frame", level: "frame" }
 };
 
 /** Measures the artwork inside the stage and exposes its wave and pivot positions as CSS custom properties. */
@@ -77,8 +77,14 @@ export function anchor(kind: InstrumentKind): Attachment<HTMLElement> {
 	return (stage) => {
 		const svg = stage.querySelector("svg");
 		if (!svg) throw new Error(`No ${kind} artwork to measure`);
-		const box = (index: number) =>
-			(svg.children[index] as SVGGraphicsElement).getBBox();
+		// A part's fill layer is its silhouette; the whole group's box would include its unclipped shade.
+		const box = (part: string) => {
+			const fill = svg.querySelector<SVGGraphicsElement>(
+				`[data-part="${part}"] > [data-layer="fill"]`
+			);
+			if (!fill) throw new Error(`No ${part} in the ${kind} artwork`);
+			return fill.getBBox();
+		};
 		const { span, level, pivot } = PARTS[kind];
 		const spanBox = box(span);
 		const levelBox = box(level);

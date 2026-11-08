@@ -2,10 +2,13 @@ import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { fn } from "storybook/test";
 import { INSTRUMENT_KINDS } from "../../src/player";
 import Instrument from "./Instrument.svelte";
+import Magnify from "./Magnify.svelte";
 
 const meta = {
 	title: "Instrument",
 	component: Instrument,
+	decorators: [() => ({ Component: Magnify })],
+	parameters: { layout: "centered" },
 	args: { onring: fn() },
 	argTypes: {
 		kind: { control: "select", options: INSTRUMENT_KINDS },
