@@ -4,6 +4,7 @@ import { plugins } from "./vite.plugins.ts";
 
 export default defineConfig({
 	root: import.meta.dirname,
+	base: "./",
 	plugins,
 	build: {
 		outDir: path.resolve(import.meta.dirname, "../dist"),
