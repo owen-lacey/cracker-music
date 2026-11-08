@@ -15,11 +15,29 @@ const ARTWORK = import.meta.glob<Artwork>("./assets/instruments/*.svg", {
 	eager: true
 });
 
+const ICONS = import.meta.glob<Artwork>("./assets/icons/*.svg", {
+	query: "?component",
+	import: "default",
+	eager: true
+});
+
+/** How each instrument kind is named in the post's controls. */
+export const KIND_LABELS: Record<InstrumentKind, string> = {
+	bell: "Bells",
+	whistle: "Whistles",
+	xylophone: "Xylophones"
+};
+
 export function artwork(
 	kind: InstrumentKind,
 	number: InstrumentNumber
 ): Artwork {
 	return ARTWORK[`./assets/instruments/${kind}-${number}.svg`];
+}
+
+/** A single-colour outline icon of an instrument kind, stroked in `currentColor`. */
+export function icon(kind: InstrumentKind): Artwork {
+	return ICONS[`./assets/icons/${kind}.svg`];
 }
 
 /** The whistle (scale note) an instrument of any kind plays. */

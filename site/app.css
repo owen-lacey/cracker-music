@@ -5,12 +5,34 @@
 	--number-color: #707985;
 	--number-gap: 0.5rem;
 	--picker-margin: 2rem;
+	--surface: #ffffff;
 	--toggle-color: #707985;
-	--toggle-active-underline: #f0223e;
 	--toggle-gap: 1.5rem;
 	--toggle-margin: 2rem;
-	--toggle-underline: 2px;
-	--toggle-underline-gap: 0.25rem;
+	--toggle-radius: 999px;
+	--toggle-border: 1px;
+	--toggle-border-color: #cdd4db;
+	--toggle-inset: 0.25rem;
+	--toggle-padding: 0.25rem 1rem;
+	--toggle-active-bg: var(--ink);
+	--toggle-active-color: var(--surface);
+	--toggle-duration: 150ms;
+	--switcher-top: 1rem;
+	--switcher-size: 3rem;
+	--switcher-icon: 1.5rem;
+	--switcher-gap: 0.5rem;
+	/* Room for the longest instrument name, "Xylophones". */
+	--switcher-label-width: 8rem;
+	--switcher-label-gap: 0.5rem;
+	--switcher-bg: var(--surface);
+	--switcher-shadow: 0 2px 8px rgb(76 77 97 / 0.2);
+	--switcher-z: 10;
+	/* The switcher drops in from this far above and grows from this scale, as if the toggle followed the reader down. */
+	--switcher-drop: 1.5rem;
+	--switcher-from-scale: 0.6;
+	--switcher-duration: 250ms;
+	--switcher-easing: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+	--switcher-stagger: 50ms;
 	--track-slot: 1.25rem;
 	--track-playhead: 25%;
 	--track-height: 3rem;
@@ -70,6 +92,7 @@
 
 body {
 	margin: 0;
+	background: var(--surface);
 	font-family: system-ui, sans-serif;
 	line-height: 1.6;
 }

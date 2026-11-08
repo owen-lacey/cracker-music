@@ -1,17 +1,26 @@
 <script lang="ts">
-	import { INSTRUMENT_KINDS, type InstrumentKind } from "../../src/player";
+	import type { Attachment } from "svelte/attachments";
+	import { INSTRUMENT_KINDS } from "../../src/player";
+	import { KIND_LABELS } from "../instruments";
 	import { selection } from "../selection.svelte";
 	import Instruments from "./Instruments.svelte";
+	import InstrumentSwitcher from "./InstrumentSwitcher.svelte";
 
-	const LABELS: Record<InstrumentKind, string> = {
-		bell: "Bells",
-		whistle: "Whistles",
-		xylophone: "Xylophones"
+	/** Whether the toggle has scrolled up out of view, so the switcher stands in for it. */
+	let pinned = $state(false);
+
+	const watch: Attachment<HTMLElement> = (toggle) => {
+		const observer = new IntersectionObserver((entries) => {
+			const entry = entries[entries.length - 1];
+			pinned = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+		});
+		observer.observe(toggle);
+		return () => observer.disconnect();
 	};
 </script>
 
 <div class="picker">
-	<fieldset>
+	<fieldset {@attach watch}>
 		<legend>Instrument</legend>
 		{#each INSTRUMENT_KINDS as option (option)}
 			<label>
@@ -21,12 +30,14 @@
 					value={option}
 					bind:group={selection.kind}
 				/>
-				<span>{LABELS[option]}</span>
+				<span>{KIND_LABELS[option]}</span>
 			</label>
 		{/each}
 	</fieldset>
 	<Instruments kind={selection.kind} />
 </div>
+
+<InstrumentSwitcher {pinned} />
 
 <style>
 	.picker {
@@ -35,11 +46,11 @@
 
 	fieldset {
 		display: flex;
-		justify-content: center;
-		gap: var(--toggle-gap);
-		margin: 0 0 var(--toggle-margin);
-		padding: 0;
-		border: 0;
+		width: fit-content;
+		margin: 0 auto var(--toggle-margin);
+		padding: var(--toggle-inset);
+		border: var(--toggle-border) solid var(--toggle-border-color);
+		border-radius: var(--toggle-radius);
 	}
 
 	legend,
@@ -54,10 +65,13 @@
 
 	label span {
 		display: block;
-		padding-bottom: var(--toggle-underline-gap);
-		border-bottom: var(--toggle-underline) solid transparent;
+		padding: var(--toggle-padding);
+		border-radius: var(--toggle-radius);
 		color: var(--toggle-color);
 		cursor: pointer;
+		transition:
+			background-color var(--toggle-duration),
+			color var(--toggle-duration);
 	}
 
 	label span:hover {
@@ -65,13 +79,12 @@
 	}
 
 	input:checked + span {
-		border-bottom-color: var(--toggle-active-underline);
-		color: var(--ink);
+		background-color: var(--toggle-active-bg);
+		color: var(--toggle-active-color);
 	}
 
 	input:focus-visible + span {
 		outline: 2px solid var(--focus-color);
-		outline-offset: 4px;
-		border-radius: 4px;
+		outline-offset: 2px;
 	}
 </style>
