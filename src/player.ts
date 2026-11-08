@@ -127,13 +127,18 @@ export async function preview(
 	sound(kind, await getSampler(kind), midi, "8n");
 }
 
-export function stop(): void {
+/** Stops the transport and drops the melody, leaving notes already struck to ring out. */
+function halt(): void {
 	const transport = Tone.getTransport();
 	transport.stop();
 	transport.cancel();
 	Tone.getDraw().cancel();
 	part?.dispose();
 	part = undefined;
+}
+
+export function stop(): void {
+	halt();
 	for (const sampler of samplers.values()) sampler.releaseAll();
 }
 
@@ -171,12 +176,16 @@ export async function play(
 		if (event.midi !== null) sound(kind, sampler, event.midi, "16n", time);
 		Tone.getDraw().schedule(() => onSlot(event.index), time);
 	}, events).start(0);
-	transport.scheduleOnce(() => {
-		stop();
-		onEnd();
+	/* Fires a look-ahead early; the end waits for the audio, as onSlot does, and the last note rings on. */
+	transport.scheduleOnce((time) => {
+		Tone.getDraw().schedule(() => {
+			halt();
+			onEnd();
+		}, time);
 	}, slotTime(midis.length));
 	settledAt = Tone.now();
-	transport.start(settledAt, `${from * ticksPerSlot()}i`);
+	/* Tone reads ticks notation as whole numbers only; "224.64i" would be taken as seconds. */
+	transport.start(settledAt, `${Math.round(from * ticksPerSlot())}i`);
 }
 
 /**
