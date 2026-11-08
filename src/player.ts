@@ -67,6 +67,8 @@ export const DEFAULT_TEMPO = 100;
 
 let tempo = DEFAULT_TEMPO;
 let transpose = 0;
+/** Audio time the last start, resume or paused seek takes effect, a look-ahead after the call. */
+let settledAt = 0;
 
 function sampleUrls(files: SampleFiles): Record<number, string> {
 	return Object.fromEntries(
@@ -173,24 +175,35 @@ export async function play(
 		stop();
 		onEnd();
 	}, slotTime(midis.length));
-	transport.start(undefined, `${from * ticksPerSlot()}i`);
+	settledAt = Tone.now();
+	transport.start(settledAt, `${from * ticksPerSlot()}i`);
 }
 
-/** Holds playback where it is; `resume` carries on from the same slot. */
+/**
+ * Holds playback a look-ahead after the call, once the notes already scheduled have sounded;
+ * `position` keeps moving until then. `resume` carries on from the same slot.
+ */
 export function pause(): void {
 	Tone.getTransport().pause();
 }
 
 export function resume(): void {
-	Tone.getTransport().start();
+	settledAt = Tone.now();
+	Tone.getTransport().start(settledAt);
 }
 
 /** Moves a playing or paused melody to a position in 16th slots. */
 export function seek(slot: number): void {
-	Tone.getTransport().ticks = slot * ticksPerSlot();
+	const transport = Tone.getTransport();
+	transport.ticks = slot * ticksPerSlot();
+	if (transport.state === "paused") settledAt = Tone.now();
 }
 
-/** The playing position in 16th slots, read at audio time so it lines up with onSlot. */
+/**
+ * The playing position in 16th slots, read at audio time so it lines up with onSlot. Until a
+ * start or paused seek takes effect, it is the position it moves to, not the one held before.
+ */
 export function position(): number {
-	return Tone.getTransport().getTicksAtTime(Tone.immediate()) / ticksPerSlot();
+	const time = Math.max(Tone.immediate(), settledAt);
+	return Tone.getTransport().getTicksAtTime(time) / ticksPerSlot();
 }

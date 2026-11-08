@@ -136,8 +136,9 @@
 		}
 	}
 
+	/* Follows while paused too: the melody plays on for a moment after a pause. */
 	$effect(() => {
-		if (status !== "playing" || drag) return;
+		if ((status !== "playing" && status !== "paused") || drag) return;
 		let frame = requestAnimationFrame(function follow() {
 			at = position();
 			frame = requestAnimationFrame(follow);
