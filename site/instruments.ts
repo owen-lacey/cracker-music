@@ -78,12 +78,15 @@ export function anchor(kind: InstrumentKind): Attachment<HTMLElement> {
 		const svg = stage.querySelector("svg");
 		if (!svg) throw new Error(`No ${kind} artwork to measure`);
 		// A part's fill layer is its silhouette; the whole group's box would include its unclipped shade.
+		// Boxes are in the artwork's user space, so shift them by its cropped viewBox origin into the stage's.
+		const origin = svg.viewBox.baseVal;
 		const box = (part: string) => {
 			const fill = svg.querySelector<SVGGraphicsElement>(
 				`[data-part="${part}"] > [data-layer="fill"]`
 			);
 			if (!fill) throw new Error(`No ${part} in the ${kind} artwork`);
-			return fill.getBBox();
+			const { x, y, width, height } = fill.getBBox();
+			return { x: x - origin.x, y: y - origin.y, width, height };
 		};
 		const { span, level, pivot } = PARTS[kind];
 		const spanBox = box(span);
@@ -108,22 +111,26 @@ export function anchor(kind: InstrumentKind): Attachment<HTMLElement> {
 }
 
 /**
- * Shrinks a row of instruments to fit its width on one line: sets `--fit` (at most 1) to the
- * row's width over the artwork's natural width plus its unscaled `--instrument-gap`s.
+ * Gives every instrument in a row an equal slot and shrinks the row to fit its width on one line:
+ * sets `--slot` to the widest artwork's natural width, and `--fit` (at most 1) to the row's width
+ * over the slots' natural width plus their unscaled `--instrument-gap`s.
  * Each child of the row holds one instrument, whose first `<svg>` is its artwork.
  */
 export const fit: Attachment<HTMLElement> = (row) => {
 	const resize = () => {
 		const items = [...row.children];
-		const artwork = items.reduce((sum, item) => {
-			const svg = item.querySelector("svg");
-			if (!svg) throw new Error("No artwork to fit in the instruments row");
-			return sum + svg.width.baseVal.value;
-		}, 0);
+		const slot = Math.max(
+			...items.map((item) => {
+				const svg = item.querySelector("svg");
+				if (!svg) throw new Error("No artwork to fit in the instruments row");
+				return svg.width.baseVal.value;
+			})
+		);
 		const gap = parseFloat(
 			getComputedStyle(row).getPropertyValue("--instrument-gap")
 		);
-		const natural = artwork + gap * (items.length - 1);
+		const natural = slot * items.length + gap * (items.length - 1);
+		row.style.setProperty("--slot", `${slot}px`);
 		row.style.setProperty("--fit", `${Math.min(1, row.clientWidth / natural)}`);
 	};
 	const observer = new ResizeObserver(resize);

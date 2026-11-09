@@ -21,7 +21,7 @@
 	}
 </script>
 
-<!-- Keyed so `fit` re-measures when the kind (and so the artwork) changes. -->
+<!-- Keyed so `fit` re-measures the slots when the kind (and so the artwork) changes. -->
 {#key kind}
 	<div class="instruments" {@attach fit}>
 		{#each NUMBERS as number (number)}
@@ -50,7 +50,10 @@
 <style>
 	.instruments {
 		--fit: 1;
-		display: flex;
+		--slot: 0px;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: calc(var(--slot) * var(--fit));
 		justify-content: center;
 		align-items: end;
 		gap: calc(var(--instrument-gap) * var(--fit));
