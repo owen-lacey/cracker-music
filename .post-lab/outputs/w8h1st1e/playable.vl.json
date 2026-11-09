@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": {
     "text": "Notes playable on the 8 whistles",
-    "subtitle": "4 of 22 included carols fully playable on 1–7 and 1'"
+    "subtitle": "4 of 20 included carols fully playable on 1–7 and 1'"
   },
   "width": "container",
   "height": 360,
@@ -57,21 +57,9 @@
         "bin": "80–89%"
       },
       {
-        "title": "The twelve days of Christmas",
-        "mode": "major",
-        "playable": 88.1,
-        "bin": "80–89%"
-      },
-      {
         "title": "Away in a manger",
         "mode": "major",
         "playable": 88.4,
-        "bin": "80–89%"
-      },
-      {
-        "title": "While shepherds watched",
-        "mode": "major",
-        "playable": 89.2,
         "bin": "80–89%"
       },
       {

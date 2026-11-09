@@ -239,7 +239,7 @@
   },
   {
     "title": "The twelve days of Christmas",
-    "included": true,
+    "included": false,
     "mode": "major",
     "swing": false
   },
@@ -270,7 +270,7 @@
   {
     "title": "While shepherds watched",
     "tune": "Winchester Old",
-    "included": true,
+    "included": false,
     "mode": "major",
     "swing": false
   },

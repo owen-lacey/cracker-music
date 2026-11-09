@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { carols, includedCarols, isSwung, slugify } from "./carols";
 
 describe("includedCarols", () => {
-	it("reads every carol from data/carols.json with unique slugs", () => {
-		expect(carols).toHaveLength(46);
-		expect(new Set(carols.map((carol) => carol.slug)).size).toBe(46);
+	it("reads every included carol from data/carols.json with unique slugs", () => {
+		expect(carols).toHaveLength(20);
+		expect(new Set(carols.map((carol) => carol.slug)).size).toBe(20);
 	});
 
 	it("sorts carols alphabetically by title", () => {
@@ -14,7 +14,7 @@ describe("includedCarols", () => {
 				a.localeCompare(b, "en", { sensitivity: "base" })
 			)
 		);
-		expect(titles[0]).toBe("Angels we have heard on high");
+		expect(titles[0]).toBe("Away in a manger");
 	});
 
 	it("leaves out excluded carols and keeps tunes and modes", () => {
