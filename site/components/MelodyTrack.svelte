@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts">
-	import { Pause, Play, RotateCcw } from "@lucide/svelte";
+	import { Pause, Play, RotateCcw, SkipForward } from "@lucide/svelte";
 	import { onDestroy, untrack, type Snippet } from "svelte";
 	import { type Slot } from "../../src/melody";
 	import { midiFor } from "../../src/pitch";
@@ -32,7 +32,9 @@
 		/** Playing position in 16th slots; the track slides so this slot sits on the playhead. */
 		at?: number;
 		onslot?: (index: number) => void;
-		/** Extra controls, placed after play and replay. */
+		/** Whether to show a skip-to-end control, which stops playback and moves to the last slot. */
+		skippable?: boolean;
+		/** Extra controls, placed after play, replay and skip. */
 		children?: Snippet;
 	}
 
@@ -43,6 +45,7 @@
 		swing,
 		at = $bindable(0),
 		onslot,
+		skippable = false,
 		children
 	}: Props = $props();
 
@@ -80,6 +83,11 @@
 		at = slots.length;
 		status = "idle";
 		sounding = null;
+	}
+
+	function skip() {
+		if (player.owner === self && status !== "idle") stop();
+		end();
 	}
 
 	async function start(from: number) {
@@ -221,6 +229,15 @@
 		>
 			<RotateCcw />
 		</button>
+		{#if skippable}
+			<button
+				aria-label="Skip to end"
+				disabled={at >= slots.length || status === "loading"}
+				onclick={skip}
+			>
+				<SkipForward class="solid" />
+			</button>
+		{/if}
 		{@render children?.()}
 	</div>
 

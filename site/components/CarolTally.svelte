@@ -88,6 +88,7 @@
 			tempo={fast ? sheet.tempo * 2 : sheet.tempo}
 			{swing}
 			bind:at
+			skippable
 		>
 			<button class="speed" aria-pressed={fast} onclick={() => (fast = !fast)}>
 				2×
