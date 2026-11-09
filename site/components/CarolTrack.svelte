@@ -25,6 +25,10 @@
 </script>
 
 <figure class="player">
+	<figcaption class="title">
+		<span class="name">{sheet.title}</span>
+	</figcaption>
+
 	<Instruments bind:this={instruments} kind={selection.kind} />
 	<!-- A new carol gets a new track, which stops the old one's playback. -->
 	{#key slug}
@@ -41,5 +45,19 @@
 <style>
 	.player {
 		margin: var(--picker-margin) 0;
+	}
+
+	.title {
+		margin-bottom: var(--tally-title-margin);
+		font-size: var(--tally-title-font-size);
+	}
+
+	/* Bordered like CarolTally's title. */
+	.name {
+		display: inline-block;
+		padding: var(--toggle-padding);
+		border: var(--toggle-border) solid var(--toggle-border-color);
+		border-radius: var(--toggle-radius);
+		color: var(--ink);
 	}
 </style>
