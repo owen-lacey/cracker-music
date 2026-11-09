@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { envelope, type InstrumentKind } from "../../src/player";
-	import { fit, type InstrumentNumber } from "../instruments";
+	import { ARTWORK_HEIGHT, fit, type InstrumentNumber } from "../instruments";
 	import Instrument from "./Instrument.svelte";
 
 	interface Props {
@@ -23,7 +23,11 @@
 
 <!-- Keyed so `fit` re-measures the slots when the kind (and so the artwork) changes. -->
 {#key kind}
-	<div class="instruments" {@attach fit}>
+	<div
+		class="instruments"
+		style:--artwork-height="{ARTWORK_HEIGHT}px"
+		{@attach fit}
+	>
 		{#each NUMBERS as number (number)}
 			<figure>
 				<div class="art">
@@ -66,8 +70,14 @@
 		margin: 0;
 	}
 
-	/* Zoom scales the artwork and its measured wave/pivot positions together. */
+	/*
+	 * Zoom scales the artwork and its measured wave/pivot positions together.
+	 * Every kind reserves the tallest artwork's height, so the numbers stay put when the kind changes.
+	 */
 	.art {
+		display: flex;
+		align-items: end;
+		height: var(--artwork-height);
 		zoom: var(--fit);
 	}
 

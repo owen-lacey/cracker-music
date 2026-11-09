@@ -37,6 +37,9 @@ export const KIND_LABELS: Record<InstrumentKind, string> = {
 	xylophone: "Xylophones"
 };
 
+/** The tallest artwork of any kind, in px; a row reserves it so its height holds when the kind changes. */
+export const ARTWORK_HEIGHT = __ARTWORK_HEIGHT__;
+
 export function artwork(
 	kind: InstrumentKind,
 	number: InstrumentNumber
