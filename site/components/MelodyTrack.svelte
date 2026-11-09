@@ -213,7 +213,7 @@
 	<div class="controls">
 		<button
 			aria-label={status === "playing" ? "Pause" : "Play"}
-			disabled={status === "loading"}
+			disabled={status === "loading" || slots.length === 0}
 			onclick={toggle}
 		>
 			{#if status === "playing"}
