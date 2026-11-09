@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from "svelte";
 	import { isSwung } from "../../src/carols";
 	import { formatSlot, parseMelody } from "../../src/melody";
 	import { swingDelay } from "../../src/swing";
@@ -9,28 +10,35 @@
 	import type { Slug } from "../slugs";
 	import MelodyTrack from "./MelodyTrack.svelte";
 
-	/** The carol's slug: its data/carols/<slug>.json filename. */
-	let { slug }: { slug: Slug } = $props();
+	interface Props {
+		/** The carol's slug: its data/carols/<slug>.json filename; null shows an empty tally. */
+		slug: Slug | null;
+		/** Shown in the top left in place of the carol's title. */
+		title?: Snippet;
+	}
+
+	let { slug, title }: Props = $props();
 
 	const NUMBERS: InstrumentNumber[] = [1, 2, 3, 4, 5, 6, 7, 8];
 
-	const sheet = $derived(sheetFor(slug));
-	const swing = $derived(isSwung(slug));
+	const sheet = $derived(slug === null ? null : sheetFor(slug));
+	const swing = $derived(slug !== null && isSwung(slug));
 	/** The melody with notes outside the whistles' octave moved into it, so it plays and counts as the whistles would. */
 	const slots = $derived(
-		parseMelody(sheet.melody).map(
-			(slot) => slot && fold(slot, { octaves: true, accidentals: false })
-		)
+		sheet === null
+			? []
+			: parseMelody(sheet.melody).map(
+					(slot) => slot && fold(slot, { octaves: true, accidentals: false })
+				)
 	);
+	const tempo = $derived(sheet === null ? 0 : sheet.tempo);
 	/** Every note with the instrument number that plays it and the slot position it sounds at, in melody order. */
 	const notes = $derived(
 		slots.flatMap((slot, index) => {
 			if (slot === null) return [];
 			const whistle = whistleOf(slot);
 			if (whistle === null)
-				throw new Error(
-					`${sheet.title} has ${formatSlot(slot)}, off the whistles`
-				);
+				throw new Error(`${slug} has ${formatSlot(slot)}, off the whistles`);
 			return [
 				{
 					sounds: index + swingDelay(index, swing),
@@ -63,17 +71,24 @@
 </script>
 
 <figure class="tally">
+	<figcaption class="title">
+		{#if title}
+			{@render title()}
+		{:else}
+			<span class="name">{sheet?.title}</span>
+		{/if}
+	</figcaption>
+
 	<ol class="bars">
 		{#each NUMBERS as number (number)}
 			{@const count = counts[number - 1]}
 			<li
 				class:latest={number === latest}
-				style:--share={count / most}
+				style:--share={most === 0 ? 0 : count / most}
 				aria-label="{number}: {count} notes"
 			>
 				<span class="column">
-					<span class="count">{count}</span>
-					<span class="bar"></span>
+					<span class="bar"><span class="count">{count}</span></span>
 				</span>
 				<span class="number">{number}</span>
 			</li>
@@ -83,14 +98,19 @@
 	<!-- A new carol gets a new track, which stops the old one's playback. -->
 	{#key slug}
 		<MelodyTrack
-			title={sheet.title}
+			title={sheet?.title ?? "Carol"}
 			{slots}
-			tempo={fast ? sheet.tempo * 2 : sheet.tempo}
+			tempo={fast ? tempo * 2 : tempo}
 			{swing}
 			bind:at
 			skippable
 		>
-			<button class="speed" aria-pressed={fast} onclick={() => (fast = !fast)}>
+			<button
+				class="speed"
+				aria-pressed={fast}
+				disabled={sheet === null}
+				onclick={() => (fast = !fast)}
+			>
 				2×
 			</button>
 		</MelodyTrack>
@@ -100,6 +120,20 @@
 <style>
 	.tally {
 		margin: var(--picker-margin) 0;
+	}
+
+	.title {
+		margin-bottom: var(--tally-title-margin);
+		font-size: var(--tally-title-font-size);
+	}
+
+	/* Bordered like the picker's select, which takes this spot in CarolPicker. */
+	.name {
+		display: inline-block;
+		padding: var(--toggle-padding);
+		border: var(--toggle-border) solid var(--toggle-border-color);
+		border-radius: var(--toggle-radius);
+		color: var(--ink);
 	}
 
 	.bars {
@@ -122,17 +156,15 @@
 	/* A fixed height, so the figure doesn't grow and push the page as the bars rise. */
 	.column {
 		display: flex;
-		flex-direction: column;
-		justify-content: end;
-		align-items: center;
-		gap: var(--number-gap);
+		align-items: end;
 		height: var(--tally-height);
 	}
 
-	/* The busiest bar fills the column, less the count above it. */
+	/* The busiest bar fills the column. */
 	.bar {
+		position: relative;
 		width: var(--tally-bar-width);
-		height: calc(var(--share) * (100% - 1lh - var(--number-gap)));
+		height: calc(var(--share) * 100%);
 		border-radius: var(--tally-bar-radius) var(--tally-bar-radius) 0 0;
 		background: var(--tally-bar-color);
 		transition:
@@ -140,8 +172,12 @@
 			background-color var(--tally-duration);
 	}
 
-	/* Shown on hover only; hidden rather than removed, so the bars keep their height. */
+	/* Shown on hover only, floating above the bar so it takes no room from the column. */
 	.count {
+		position: absolute;
+		bottom: calc(100% + var(--number-gap));
+		left: 50%;
+		translate: -50%;
 		visibility: hidden;
 		color: var(--ink);
 		font-variant-numeric: tabular-nums;
@@ -178,8 +214,13 @@
 			color var(--toggle-duration);
 	}
 
-	.speed:hover {
+	.speed:hover:enabled {
 		color: var(--ink);
+	}
+
+	.speed:disabled {
+		opacity: var(--track-past-opacity);
+		cursor: default;
 	}
 
 	.speed[aria-pressed="true"] {

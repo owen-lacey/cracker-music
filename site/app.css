@@ -43,12 +43,15 @@
 	--track-line-color: #e4e8ec;
 	--track-past-opacity: 0.35;
 	--tally-height: 8rem;
+	--carols-tally-height: 16rem;
 	--tally-bar-width: 1.5rem;
 	--tally-bar-radius: 4px;
 	--tally-bar-color: #707985;
 	/* Narrows on phones so all eight bars fit the column. */
 	--tally-gap: min(var(--instrument-gap), 3vw);
 	--tally-duration: 100ms;
+	--tally-title-margin: 1rem;
+	--tally-title-font-size: 0.875rem;
 	/* Wide enough for the longest title, "Rudolph, the red-nosed reindeer", beside "100% playable". */
 	--select-width: 26rem;
 	--select-gap: 0.75rem;
@@ -57,6 +60,7 @@
 	--select-option-padding: 0.375rem 0.75rem;
 	--select-option-radius: 0.5rem;
 	--select-option-hover-bg: #f1f3f5;
+	--select-chevron-size: 1rem;
 	--control-size: 1.5rem;
 	/* Heavier than Lucide's 2 so the outline replay arrow weighs the same as the solid icons. */
 	--control-stroke: 2.5;

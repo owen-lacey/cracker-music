@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CarolPicker from "./components/CarolPicker.svelte";
+	import CarolsTally from "./components/CarolsTally.svelte";
 	import CarolTally from "./components/CarolTally.svelte";
 	import CarolTrack from "./components/CarolTrack.svelte";
 	import InstrumentPicker from "./components/InstrumentPicker.svelte";
@@ -47,9 +48,9 @@
 	<CarolTally slug="jingle-bells" />
 
 	<p>
-		Whoever had bell 3 is working overtime, whilst 6, 7 and 8 have nothing to
-		do. This carol is pleasing because it fits into the provided 8 notes. Let's
-		do rudolph instead:
+		Whoever had bell 3 is working overtime with 24 notes, whilst 6, 7 and 8 have
+		nothing to do. This carol is pleasing because it fits into the provided 8
+		notes. Let's do the same tallying exercise for rudolph now:
 	</p>
 
 	<CarolTally slug="rudolph-the-red-nosed-reindeer" />
@@ -59,23 +60,32 @@
 		drop down the octave. If you had 9 whistles it would have been fine, but I
 		guess that's not a good enough excuse for the manufacturers to add another.
 	</p>
+
 	<p>
-		Change the selected carol to see the tally counts for the instruments, there
-		are 22 in total:
+		Joy to the world is far more pleasing and manages to get everyone round the
+		table involved as early as it's possible to do so:
+	</p>
+
+	<CarolTally slug="joy-to-the-world" />
+	<p>
+		Only 4 of our 20 carols can fit all notes on these 8 pitches without going
+		up or down an octave, making them 100% playable. The rest need to make
+		compromises here and there, and hope the listener can still make out the
+		tune when the octaves are jumping all over the place. Select a carol below
+		and listen for yourself:
 	</p>
 	<CarolPicker />
 
-	<p>
-		Combining all 22 carols gives us the answer to "is my whistle any good?"
-	</p>
-
-	<!-- Combined tally, but with all carols listed underneath. Hovering over it shows each carols' contribution -->
+	<p>Adding up the tallies for each carol gives us our first result</p>
+	<CarolsTally />
 
 	<hr />
 	<p>Notes:</p>
 	<ul>
 		<li>Minor/major keys?</li>
 		<li>Deeper dive into % playable?</li>
+		<li>Each note is a ball which drops in a bucket rather than histogram?</li>
+		<li>Need to make a viz box or something</li>
 	</ul>
 </main>
 
