@@ -114,3 +114,8 @@ body {
 	font-family: system-ui, sans-serif;
 	line-height: 1.6;
 }
+
+/* Mobile browsers box a tapped button; each button draws its own :focus-visible ring instead. */
+button {
+	-webkit-tap-highlight-color: transparent;
+}
