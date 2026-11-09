@@ -19,8 +19,8 @@
 
 <!--
 	A native select, so keyboard, type-to-jump and the phone's own picker all still work.
-	Where it can be styled, each option lines up its title, a bar of its playable share and
-	the number; elsewhere an option reads as plain text, "Away in a manger: 88%".
+	Where it can be styled, each option sets its title against its playable share in muted
+	text; elsewhere an option reads as plain text, "Away in a manger: 88% playable".
 -->
 <div class="picker">
 	<select bind:value={slug} aria-label="Carol">
@@ -29,9 +29,7 @@
 			<option value={option.slug}>
 				<span class="title">{option.title}</span><span class="separator"
 					>:&nbsp;</span
-				><span class="share" style:--share={option.percent / 100}></span><span
-					class="percent">{option.percent}%</span
-				>
+				><span class="percent">{option.percent}% playable</span>
 			</option>
 		{/each}
 	</select>
@@ -83,9 +81,7 @@
 		selectedcontent,
 		option {
 			display: grid;
-			grid-template-columns: 1fr var(--select-share-width) var(
-					--select-percent-width
-				);
+			grid-template-columns: 1fr auto;
 			align-items: center;
 			gap: var(--select-gap);
 		}
@@ -124,20 +120,9 @@
 			display: none;
 		}
 
-		.share {
-			height: var(--select-share-height);
-			border-radius: var(--select-share-height);
-			background: linear-gradient(
-				to right,
-				var(--tally-bar-color) calc(var(--share) * 100%),
-				var(--track-line-color) 0
-			);
-		}
-
 		.percent {
 			color: var(--number-color);
 			font-variant-numeric: tabular-nums;
-			text-align: end;
 		}
 	}
 </style>

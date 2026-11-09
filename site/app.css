@@ -49,12 +49,9 @@
 	/* Narrows on phones so all eight bars fit the column. */
 	--tally-gap: min(var(--instrument-gap), 3vw);
 	--tally-duration: 100ms;
-	/* Wide enough for the longest title, "Rudolph, the red-nosed reindeer", beside its share. */
+	/* Wide enough for the longest title, "Rudolph, the red-nosed reindeer", beside "100% playable". */
 	--select-width: 26rem;
 	--select-gap: 0.75rem;
-	--select-share-width: 4rem;
-	--select-share-height: 0.375rem;
-	--select-percent-width: 2.75rem;
 	--select-picker-padding: 0.25rem;
 	--select-picker-radius: 0.75rem;
 	--select-option-padding: 0.375rem 0.75rem;
