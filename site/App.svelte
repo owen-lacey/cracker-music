@@ -3,6 +3,7 @@
 	import CarolsTally from "./components/CarolsTally.svelte";
 	import CarolTally from "./components/CarolTally.svelte";
 	import CarolTrack from "./components/CarolTrack.svelte";
+	import FairSplit from "./components/FairSplit.svelte";
 	import InstrumentPicker from "./components/InstrumentPicker.svelte";
 </script>
 
@@ -76,16 +77,30 @@
 	</p>
 	<CarolPicker />
 
-	<p>Adding up the tallies for each carol gives us our first result</p>
+	<p>
+		Adding up the tallies for each carol tells us which numbers are the busiest.
+		Highlight a carol to its contribution to the scores.
+	</p>
 	<CarolsTally />
 
+	<p>
+		That's all well and good, but we're not necessarily going to have 8 people
+		round the table. Below is a grid that divvies out the instruments based on
+		how many people there are, optimising for everyone having as equal a share
+		as possible.
+	</p>
+	<FairSplit />
+
+	<p>TODO: finish</p>
+
 	<hr />
-	<p>Notes:</p>
+	<p>Brain dump (won't make it into the final peice):</p>
 	<ul>
 		<li>Minor/major keys?</li>
 		<li>Deeper dive into % playable?</li>
 		<li>Each note is a ball which drops in a bucket rather than histogram?</li>
 		<li>Need to make a viz box or something</li>
+		<li>What if they don't have certain carols?</li>
 	</ul>
 </main>
 
