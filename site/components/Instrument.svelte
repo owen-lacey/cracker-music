@@ -57,6 +57,8 @@
 		border: 0;
 		background: none;
 		cursor: pointer;
+		/* Fast repeat taps play the instrument instead of zooming the page. */
+		touch-action: manipulation;
 	}
 
 	.instrument:focus-visible {
