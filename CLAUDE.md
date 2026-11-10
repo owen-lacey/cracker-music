@@ -15,7 +15,7 @@ Analysis repo measuring how often specific notes and scale degrees occur across 
 - `site/`: the blog post. Svelte 5 + Vite, TypeScript, plain scoped CSS.
 - `transcriber/`: the React transcription prototype. It is not part of the blog post.
 - `src/`: shared domain logic (carols, melody, pitch, usage, whistles) and Tone.js playback (`player`) used by `site/`, `transcriber/` and `analysis/`.
-- `src/samples/<kind>/<midi>.mp3`: one recording per note for each instrument kind, played through `Tone.Sampler`. All are CC0, so the post needs no credits; `src/samples/CREDITS.md` lists every file's source and how it was edited.
+- `src/samples/<kind>/<take>/<midi>.mp3`: recordings per instrument kind in numbered take folders; every take records the same notes, and each note sounded plays a random take (`src/takes.ts`), one `Tone.Sampler` per take. All are CC0, so the post needs no credits; `src/samples/CREDITS.md` lists every file's source and how it was edited.
 - `site/components/`: blog components, each with a `*.stories.ts` for Storybook. Vite plugins shared by the blog and Storybook live in `site/vite.plugins.ts`; SVGs import inline as components via `?component`.
 - `analysis/`: scripts run by post-lab code cells.
 - `scripts/slugs.ts`: writes the `Slug` type (every `data/carols/<slug>.json`) to `site/slugs.ts`, which is gitignored.

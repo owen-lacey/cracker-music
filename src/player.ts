@@ -1,16 +1,16 @@
 import * as Tone from "tone";
 import { SWING_DELAY } from "./swing";
+import { groupTakes, nextTake, type SampleFiles } from "./takes";
 
 export const INSTRUMENT_KINDS = ["bell", "whistle", "xylophone"] as const;
 export type InstrumentKind = (typeof INSTRUMENT_KINDS)[number];
-
-type SampleFiles = Record<string, string>;
 
 /** Struck instruments ring out after the strike; blown ones sound only while the note lasts. */
 export type Envelope = "struck" | "blown";
 
 /**
- * Recordings named by the MIDI note they sound; credited in `src/samples/CREDITS.md`.
+ * Recordings in numbered take folders, named by the MIDI note they sound; credited in
+ * `src/samples/CREDITS.md`.
  * `volume` is in decibels: the whistle has no strike transient, so it is lifted to sound as loud.
  */
 const VOICES: Record<
@@ -18,7 +18,7 @@ const VOICES: Record<
 	{ files: SampleFiles; envelope: Envelope; volume: number }
 > = {
 	bell: {
-		files: import.meta.glob("./samples/bell/*.mp3", {
+		files: import.meta.glob("./samples/bell/*/*.mp3", {
 			query: "?url",
 			import: "default",
 			eager: true
@@ -27,7 +27,7 @@ const VOICES: Record<
 		volume: 0
 	},
 	whistle: {
-		files: import.meta.glob("./samples/whistle/*.mp3", {
+		files: import.meta.glob("./samples/whistle/*/*.mp3", {
 			query: "?url",
 			import: "default",
 			eager: true
@@ -36,7 +36,7 @@ const VOICES: Record<
 		volume: 3
 	},
 	xylophone: {
-		files: import.meta.glob("./samples/xylophone/*.mp3", {
+		files: import.meta.glob("./samples/xylophone/*/*.mp3", {
 			query: "?url",
 			import: "default",
 			eager: true
@@ -53,7 +53,10 @@ export function envelope(kind: InstrumentKind): Envelope {
 /** Cracker instruments sound two octaves above the written melody. */
 const OCTAVE_SHIFT = 24;
 
-const samplers = new Map<InstrumentKind, Tone.Sampler>();
+/** One sampler per take of each instrument; each note plays a random take. */
+const samplers = new Map<InstrumentKind, Tone.Sampler[]>();
+/** The take each instrument last played, so the next note plays a different one. */
+const lastTakes = new Map<InstrumentKind, number>();
 
 interface SlotEvent {
 	time: string;
@@ -64,7 +67,7 @@ interface SlotEvent {
 let part: Tone.Part<SlotEvent> | undefined;
 
 /** The instrument the melody plays on; `setKind` swaps it without stopping playback. */
-let voice: { kind: InstrumentKind; sampler: Tone.Sampler } | undefined;
+let voice: { kind: InstrumentKind; takes: Tone.Sampler[] } | undefined;
 /** The kind last asked for, so an earlier, slower load does not win. */
 let wantedKind: InstrumentKind | undefined;
 
@@ -76,40 +79,36 @@ let transpose = 0;
 /** Audio time the last start, resume or paused seek takes effect, a look-ahead after the call. */
 let settledAt = 0;
 
-function sampleUrls(files: SampleFiles): Record<number, string> {
-	return Object.fromEntries(
-		Object.entries(files).map(([path, url]) => [
-			Number(path.slice(path.lastIndexOf("/") + 1, -".mp3".length)),
-			url
-		])
+function createTakes(kind: InstrumentKind): Tone.Sampler[] {
+	return groupTakes(VOICES[kind].files).map((urls) =>
+		new Tone.Sampler({ urls, volume: VOICES[kind].volume }).toDestination()
 	);
 }
 
-/** Creates the instrument's sampler on first use and waits for its recordings to load. */
-async function getSampler(kind: InstrumentKind): Promise<Tone.Sampler> {
+/** Creates the instrument's take samplers on first use and waits for their recordings to load. */
+async function getTakes(kind: InstrumentKind): Promise<Tone.Sampler[]> {
 	await Tone.start();
-	const sampler =
-		samplers.get(kind) ??
-		new Tone.Sampler({
-			urls: sampleUrls(VOICES[kind].files),
-			volume: VOICES[kind].volume
-		}).toDestination();
-	samplers.set(kind, sampler);
+	const takes = samplers.get(kind) ?? createTakes(kind);
+	samplers.set(kind, takes);
 	await Tone.loaded();
-	return sampler;
+	return takes;
 }
 
 function frequency(midi: number): number {
 	return Tone.Frequency(midi + OCTAVE_SHIFT + transpose, "midi").toFrequency();
 }
 
+/** Sounds the note on a random take, never the one this instrument played last. */
 function sound(
 	kind: InstrumentKind,
-	sampler: Tone.Sampler,
+	takes: Tone.Sampler[],
 	midi: number,
 	duration: Tone.Unit.Time,
 	time?: Tone.Unit.Time
 ): void {
+	const take = nextTake(takes.length, lastTakes.get(kind));
+	lastTakes.set(kind, take);
+	const sampler = takes[take];
 	if (VOICES[kind].envelope === "struck")
 		sampler.triggerAttack(frequency(midi), time);
 	else sampler.triggerAttackRelease(frequency(midi), duration, time);
@@ -130,7 +129,11 @@ export async function preview(
 	midi: number,
 	kind: InstrumentKind = "bell"
 ): Promise<void> {
-	sound(kind, await getSampler(kind), midi, "8n");
+	sound(kind, await getTakes(kind), midi, "8n");
+}
+
+function releaseAll(takes: Tone.Sampler[]): void {
+	for (const sampler of takes) sampler.releaseAll();
 }
 
 /** Stops the transport and drops the melody, leaving notes already struck to ring out. */
@@ -145,7 +148,7 @@ function halt(): void {
 
 export function stop(): void {
 	halt();
-	for (const sampler of samplers.values()) sampler.releaseAll();
+	for (const takes of samplers.values()) releaseAll(takes);
 }
 
 /** Position of a 16th-note slot, in bars:beats:sixteenths, so it follows tempo changes. */
@@ -190,7 +193,7 @@ export async function play(
 	}));
 	part = new Tone.Part<SlotEvent>((time, event) => {
 		if (voice && event.midi !== null)
-			sound(voice.kind, voice.sampler, event.midi, "16n", time);
+			sound(voice.kind, voice.takes, event.midi, "16n", time);
 		Tone.getDraw().schedule(() => onSlot(event.index), time);
 	}, events).start(0);
 	/* Fires a look-ahead early; the end waits for the audio, as onSlot does, and the last note rings on. */
@@ -208,10 +211,10 @@ export async function play(
 /** Plays the melody on this instrument from the next note, once its recordings load. */
 export async function setKind(kind: InstrumentKind): Promise<void> {
 	wantedKind = kind;
-	const sampler = await getSampler(kind);
+	const takes = await getTakes(kind);
 	if (wantedKind !== kind) return;
-	voice?.sampler.releaseAll();
-	voice = { kind, sampler };
+	if (voice) releaseAll(voice.takes);
+	voice = { kind, takes };
 }
 
 /**
